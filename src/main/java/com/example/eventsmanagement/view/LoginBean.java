@@ -1,4 +1,4 @@
-package com.example.eventsmanagement.beans;
+package com.example.eventsmanagement.view;
 
 public class LoginBean {
 }
