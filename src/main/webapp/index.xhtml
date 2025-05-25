@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Sign In</title>
+    <!-- Link to your external CSS file for custom styles -->
+    <link href="Style.css" rel="stylesheet" />
+    <!-- Bootstrap for styling (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</h:head>
+
+<h:body class="bg-light">
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow-lg" style="max-width: 480px; width: 100%;">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h1 class="card-title h3">Sign In</h1>
+                    <p class="card-text text-muted">Sign in below to access your account</p>
+                </div>
+
+                <form>
+                    <!-- Global error messages -->
+                    <div class="mb-3">
+                        <div class="alert alert-danger" style="display: none;"></div>
+                    </div>
+
+                    <!-- Email input -->
+                    <div class="mb-3">
+                        <!-- Bouton pour tester la connexion DB -->
+                        <div class="d-grid mt-2">
+                            <h:commandButton value="Test DB Connection"
+                                             styleClass="btn btn-secondary"
+                                             action="#{loginBean.testConnection}"
+                                             immediate="true" />
+                        </div>
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="Email Address"
+                                />
+                        <div class="text-danger small"></div>
+                    </div>
+
+                    <!-- Password input -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Password"
+                                />
+                        <div class="text-danger small"></div>
+                    </div>
+
+                    <!-- Sign-in button -->
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-dark btn-lg">Sign In</button>
+                    </div>
+
+                    <!-- Link to registration -->
+                    <p class="text-center text-muted mt-4">Don't have an account yet?
+                        <a href="register.xhtml" class="text-decoration-none">Sign Up</a>
+                    </p>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Optional: Bootstrap JS (for additional features) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</h:body>
+</html>
