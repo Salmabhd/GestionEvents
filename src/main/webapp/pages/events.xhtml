@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventMaster - Gestion des Événements</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-menu {
+            padding: 16px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item i {
+            width: 18px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+            font-size: 0.85rem;
+        }
+
+        .user-info h4 {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+
+        .user-info p {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            width: 280px;
+            font-size: 0.85rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+
+        .btn-new-event {
+            background: #6366f1;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-new-event:hover {
+            background: #4f46e5;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 24px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .filter-select {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        /* Events Grid */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .event-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .event-image {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .event-category-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .event-content {
+            padding: 18px;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .event-description {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .event-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .event-meta-item i {
+            width: 14px;
+            text-align: center;
+        }
+
+        .event-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-upcoming {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-completed {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Action Buttons */
+        .event-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: 1px solid;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+        }
+
+        .btn-view {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-view:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .btn-edit {
+            background: #fef3c7;
+            border-color: #fbbf24;
+            color: #92400e;
+        }
+
+        .btn-edit:hover {
+            background: #fde68a;
+            border-color: #f59e0b;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #dc2626;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+            border-color: #f87171;
+        }
+
+        /* Statistics Bar */
+        .stats-bar {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+
+            .events-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .search-input {
+                width: 160px;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">EventMaster</div>
+        </div>
+
+        <div class="nav-menu">
+            <button class="nav-item" onclick="window.location.href='dashboard.xhtml'">
+                <i class="fas fa-chart-pie"></i>
+                Dashboard
+            </button>
+
+            <button class="nav-item active" onclick="window.location.href='events.xhtml'">
+                <i class="fas fa-calendar-alt"></i>
+                Events
+            </button>
+
+            <button class="nav-item" onclick="window.location.href='attendees.xhtml'">
+                <i class="fas fa-users"></i>
+                Attendees
+            </button>
+
+            <button class="nav-item" onclick="window.location.href='venues.xhtml'">
+                <i class="fas fa-map-marker-alt"></i>
+                Venues
+            </button>
+
+            <button class="nav-item" onclick="window.location.href='analytics.xhtml'">
+                <i class="fas fa-chart-bar"></i>
+                Analytics
+            </button>
+
+            <button class="nav-item" onclick="window.location.href='settings.xhtml'">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </div>
+
+        <div class="user-profile">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+                <h4>John Doe</h4>
+                <p>Admin</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-title">
+                <h1>Gestion des Événements</h1>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Rechercher des événements..." />
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <button class="btn-new-event" onclick="window.location.href='create-event.xhtml'">
+                    <i class="fas fa-plus"></i>
+                    Nouvel Événement
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Statistics Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Total Événements</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Actifs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">À venir</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Terminés</div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label class="filter-label">Catégorie:</label>
+                    <select class="filter-select">
+                        <option>Toutes les catégories</option>
+                        <option>Business</option>
+                        <option>Entertainment</option>
+                        <option>Education</option>
+                        <option>Sport</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Statut:</label>
+                    <select class="filter-select">
+                        <option>Tous les statuts</option>
+                        <option>Actif</option>
+                        <option>À venir</option>
+                        <option>Terminé</option>
+                        <option>Annulé</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Date:</label>
+                    <select class="filter-select">
+                        <option>Toutes les dates</option>
+                        <option>Cette semaine</option>
+                        <option>Ce mois</option>
+                        <option>3 prochains mois</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div class="events-grid">
+                <!-- Event Card 1 -->
+                <div class="event-card">
+                    <div class="event-image">
+                        <i class="fas fa-briefcase"></i>
+                        <div class="event-category-badge">Business</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Conférence Tech Annuelle 2025</h3>
+                        <p class="event-description">Grande conférence technologique réunissant les leaders de l'industrie pour discuter des dernières innovations et tendances.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>15 Juin 2025, 09:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Centre de Conférences, Paris</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>450 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>320 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-upcoming">
+                            <i class="fas fa-circle"></i>
+                            À venir
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=1'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=1'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(1)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 2 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-music"></i>
+                        <div class="event-category-badge">Entertainment</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Festival de Musique d'Été</h3>
+                        <p class="event-description">Festival de musique en plein air avec des artistes nationaux et internationaux dans un cadre magnifique.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>28 Juin 2025, 18:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Parc de la Ville, Lyon</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>2500 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>1850 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-active">
+                            <i class="fas fa-circle"></i>
+                            Actif
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=2'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=2'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(2)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 3 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div class="event-category-badge">Education</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Workshop Marketing Digital</h3>
+                        <p class="event-description">Formation intensive sur les stratégies de marketing digital moderne et les outils les plus efficaces.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>10 Juin 2025, 14:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Centre de Formation, Marseille</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>35 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>35 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-active">
+                            <i class="fas fa-circle"></i>
+                            Actif
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=3'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=3'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(3)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 4 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-handshake"></i>
+                        <div class="event-category-badge">Business</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Networking Business Mixer</h3>
+                        <p class="event-description">Soirée de networking pour professionnels et entrepreneurs dans une ambiance décontractée.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>22 Juin 2025, 19:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Hôtel Ballroom, Nice</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>120 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>95 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-upcoming">
+                            <i class="fas fa-circle"></i>
+                            À venir
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=4'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=4'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(4)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 5 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <i class="fas fa-heart"></i>
+                        <div class="event-category-badge">Social</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Gala de Charité</h3>
+                        <p class="event-description">Soirée de gala pour collecter des fonds pour les associations locales d'aide à l'enfance.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>05 Mai 2025, 20:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Grand Théâtre, Bordeaux</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>200 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>200 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-completed">
+                            <i class="fas fa-circle"></i>
+                            Terminé
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=5'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=5'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(5)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
