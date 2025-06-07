@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Accueil - INAS Events</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f6f3ef;
+        }
+
+        /* ===== NAVBAR ===== */
+        .modern-navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background-color: #111;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .modern-navbar .logo {
+            font-weight: bold;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .modern-navbar nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        .modern-navbar nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .modern-navbar nav a:hover {
+            color: #C1272D;
+        }
+
+        .nav-tools {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-tools input {
+            padding: 7px 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            width: 160px;
+        }
+
+        .search-btn {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 7px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            background-image: url('images/img_3.png');
+            background-size: cover;
+            background-position: center;
+            height: 65vh;
+            color: white;
+            text-align: center;
+        }
+
+        .hero .overlay {
+            background: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero .hero-content {
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .hero button {
+            background-color: #9A031E;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .hero button:hover {
+            background-color: #C1272D;
+        }
+
+        /* ===== CATÉGORIES ===== */
+        .categories {
+            padding: 50px 30px;
+            background: white;
+            text-align: center;
+        }
+
+        .categories h2 {
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        .cat-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cat-card {
+            background: #fffdfa;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            width: 220px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cat-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .cat-card img {
+            width: 60px;
+            margin-bottom: 15px;
+        }
+
+        .cat-card h3 {
+            margin: 10px 0;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard-info {
+            background-color: #111;
+            color: #ffffff;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .dashboard-info h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-info p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+
+        /* ===== CONTACT SECTION ===== */
+        .contact-section {
+            background-color: #00296B;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .social-links a {
+            margin: 0 15px;
+            display: inline-block;
+            text-decoration: none;
+            color: #9A031E;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .social-links a:hover {
+            color: #fff;
+        }
+
+        /* ===== FOOTER STRUCTURÉ ===== */
+        .structured-footer {
+            background-color: #fffcfc;
+            color: #090909;
+            padding: 40px 20px 10px 20px;
+            font-size: 15px;
+        }
+
+        .footer-columns {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            margin: 0 auto;
+            gap: 40px;
+        }
+
+        .footer-columns div {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .footer-columns h4 {
+            color: #000000;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .footer-columns a {
+            display: block;
+            color: #000000;
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: 0.3s ease;
+        }
+
+        .footer-columns a:hover {
+            color: #a30606;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            color: #777;
+            font-size: 14px;
+            border-top: 1px solid #333;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .cat-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .social-links a {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .footer-columns {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</h:head>
+<h:body>
+
+    <!-- ===== NAVBAR ===== -->
+    <header class="modern-navbar">
+        <div class="logo">INAS Events</div>
+        <nav>
+            <a href="accueil.xhtml">Accueil</a>
+            <a href="evenements.xhtml">Événements</a>
+            <a href="#">À propos</a>
+            <a href="login.xhtml">Connexion</a>
+        </nav>
+        <div class="nav-tools">
+            <input type="text" placeholder="Rechercher..." />
+            <button class="search-btn">🔍</button>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="overlay">
+            <div class="hero-content">
+                <h1>Explorez vos événements préférés</h1>
+                <p>Musique, théâtre, expositions... vivez la culture autrement</p>
+                <h:link outcome="evenements.xhtml">
+                    <button>Découvrir maintenant</button>
+                </h:link>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CATÉGORIES ===== -->
+    <section class="categories">
+        <h2>Catégories d'événements populaires</h2>
+        <div class="cat-grid">
+            <div class="cat-card">
+                <img src="images/img_2.png" alt="Musique"/>
+                <h3>Musique</h3>
+                <p>Concerts, soirées live, festivals</p>
+            </div>
+            <div class="cat-card">
+                <img src="images/img_5.png" alt="Théâtre"/>
+                <h3>Théâtre</h3>
+                <p>Comédies, drames, spectacles</p>
+            </div>
+            <div class="cat-card">
+                <img src="images/img.png" alt="Exposition"/>
+                <h3>Expositions</h3>
+                <p>Art, photographie, musées</p>
+            </div>
+            <div class="cat-card">
+                <img src="images/img_1.png" alt="Sport"/>
+                <h3>Sport</h3>
+                <p>Matches, tournois, compétitions</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== INFO SECTION ===== -->
+    <section class="dashboard-info">
+        <h2>Pourquoi choisir INAS Events ?</h2>
+        <p>INAS Events vous connecte aux expériences culturelles incontournables du Maroc. Grâce à notre tableau de bord, suivez vos événements préférés, recevez des recommandations et vivez la culture locale comme jamais auparavant.</p>
+    </section>
+
+
+
+    <!-- ===== FOOTER STRUCTURÉ ===== -->
+    <footer class="structured-footer">
+        <div class="footer-columns">
+            <div>
+                <h4>INAS Events</h4>
+                <a href="#">À propos</a>
+                <a href="#">Équipe</a>
+                <a href="#">Contact</a>
+            </div>
+            <div>
+                <h4> </h4>
+
+            </div>
+            <div>
+                <h4>Support</h4>
+                <a href="#">Centre d’aide</a>
+                <a href="#">Conditions</a>
+                <a href="#">Confidentialité</a>
+            </div>
+            <div>
+                <h4> </h4>
+
+            </div>
+            <div>
+                <h4>Restons connectés</h4>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">TikTok</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 INAS Events. Tous droits réservés.
+        </div>
+    </footer>
+
+</h:body>
+</html>
