@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+   <title>Connexion Participant</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <style type="text/css">
+      body {
+         font-family: Arial, sans-serif;
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         margin: 0;
+         padding: 0;
+         min-height: 100vh;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+      }
+
+      .login-container {
+         background: white;
+         padding: 40px;
+         border-radius: 15px;
+         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+         width: 100%;
+         max-width: 400px;
+         text-align: center;
+      }
+
+      .login-title {
+         color: #333;
+         margin-bottom: 30px;
+         font-size: 28px;
+         font-weight: 300;
+      }
+
+      .form-group {
+         margin-bottom: 20px;
+         text-align: left;
+      }
+
+      .form-group label {
+         display: block;
+         margin-bottom: 8px;
+         color: #555;
+         font-weight: 500;
+      }
+
+      .form-control {
+         width: 100% !important;
+         padding: 12px 15px;
+         border: 2px solid #e1e5e9;
+         border-radius: 8px;
+         font-size: 16px;
+         transition: border-color 0.3s;
+         box-sizing: border-box;
+      }
+
+      .form-control:focus {
+         border-color: #667eea;
+         outline: none;
+      }
+
+      .btn-login {
+         width: 100%;
+         padding: 15px;
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         color: white;
+         border: none;
+         border-radius: 8px;
+         font-size: 16px;
+         font-weight: 500;
+         cursor: pointer;
+         transition: transform 0.2s;
+         margin-top: 20px;
+      }
+
+      .btn-login:hover {
+         transform: translateY(-2px);
+      }
+
+      .messages {
+         margin-bottom: 20px;
+      }
+
+      .admin-link {
+         margin-top: 20px;
+         padding-top: 20px;
+         border-top: 1px solid #e1e5e9;
+      }
+
+      .admin-link a {
+         color: #667eea;
+         text-decoration: none;
+         font-size: 14px;
+      }
+
+      .admin-link a:hover {
+         text-decoration: underline;
+      }
+   </style>
+</h:head>
+
+<h:body>
+   <div class="login-container">
+      <h2 class="login-title">Connexion Participant</h2>
+
+      <h:form id="loginForm">
+         <div class="messages">
+            <h:messages globalOnly="true" showDetail="true" showSummary="false"
+                        styleClass="alert" />
+         </div>
+
+         <div class="form-group">
+            <h:outputLabel for="email" value="Email :" />
+            <h:inputText id="email" value="#{participantLoginBean.email}"
+                         required="true" requiredMessage="L'email est obligatoire"
+                         styleClass="form-control"
+                         placeholder="Votre email" />
+            <h:message for="email" styleClass="error-message" />
+         </div>
+
+         <div class="form-group">
+            <h:outputLabel for="password" value="Mot de passe :" />
+            <h:inputSecret id="password" value="#{participantLoginBean.password}"
+                           required="true" requiredMessage="Le mot de passe est obligatoire"
+                           styleClass="form-control"
+                           placeholder="Votre mot de passe" />
+            <h:message for="password" styleClass="error-message" />
+         </div>
+
+         <h:commandButton value="Se connecter"
+                          action="#{participantLoginBean.login}"
+                          styleClass="btn-login" />
+
+         <div class="admin-link">
+            <h:link outcome="login" value="Connexion Administrateur" />
+         </div>
+      </h:form>
+   </div>
+</h:body>
+</html>
