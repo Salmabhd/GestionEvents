@@ -35,7 +35,8 @@ public class ParticipantLoginBean implements Serializable {
             currentParticipant = participant;
             password = null;
             addMessage("Connexion réussie pour " + participant.getEmail(), FacesMessage.SEVERITY_INFO);
-            return "participant-dashboard?faces-redirect=true";
+            // Corrigez ici pour pointer vers accueil.xhtml
+            return "/pages/accueil.xhtml?faces-redirect=true";
         } else {
             addMessage("Email ou mot de passe incorrect", FacesMessage.SEVERITY_ERROR);
             return null;

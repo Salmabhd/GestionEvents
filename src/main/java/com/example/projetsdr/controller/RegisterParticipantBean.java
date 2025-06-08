@@ -12,6 +12,7 @@ import jakarta.inject.Named;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.sql.Connection;
 
 @Named("registerParticipantBean")
 @RequestScoped
@@ -32,25 +33,63 @@ public class RegisterParticipantBean implements Serializable {
             return null;
         }
 
-        // Créer un nouveau participant
-        Participant participant = new Participant();
-        participant.setNom(nom);
-        participant.setEmail(email);
-        participant.setPassword(password);
+        // Vérifier les champs obligatoires
+        if (nom == null || nom.trim().isEmpty()) {
+            addMessage("Le nom est obligatoire", FacesMessage.SEVERITY_ERROR);
+            return null;
+        }
 
-        // Sauvegarder le participant
-        ParticipantRegisterRepository repo = new ParticipantRegisterRepository(dataSource);
-        participantRegisterService service = new participantRegisterService(repo);
+        if (email == null || email.trim().isEmpty()) {
+            addMessage("L'email est obligatoire", FacesMessage.SEVERITY_ERROR);
+            return null;
+        }
 
-        boolean success = service.createParticipant(participant);
+        if (password == null || password.trim().isEmpty()) {
+            addMessage("Le mot de passe est obligatoire", FacesMessage.SEVERITY_ERROR);
+            return null;
+        }
 
-        if (success) {
-            addMessage("Inscription réussie pour " + nom, FacesMessage.SEVERITY_INFO);
-            // Réinitialiser les champs
-            clearFields();
-            return "participant-login?faces-redirect=true";
-        } else {
-            addMessage("Erreur lors de l'inscription. Veuillez réessayer.", FacesMessage.SEVERITY_ERROR);
+        try {
+            // Test de la connexion à la base de données
+            if (dataSource == null) {
+                addMessage("Erreur de configuration de la base de données", FacesMessage.SEVERITY_ERROR);
+                return null;
+            }
+
+            // Créer un nouveau participant
+            Participant participant = new Participant();
+            participant.setNom(nom.trim());
+            participant.setEmail(email.trim());
+            participant.setPassword(password);
+
+            System.out.println("Tentative d'inscription pour: " + nom + " - " + email);
+
+            // Sauvegarder le participant
+            ParticipantRegisterRepository repo = new ParticipantRegisterRepository(dataSource);
+            participantRegisterService service = new participantRegisterService(repo);
+
+            boolean success = service.createParticipant(participant);
+
+            System.out.println("Résultat de l'inscription: " + success);
+
+            if (success) {
+                // SUCCÈS : Inscription réussie
+                addMessage("Inscription réussie pour " + nom, FacesMessage.SEVERITY_INFO);
+                clearFields();
+
+                // CORRECTION : Navigation JSF simple et efficace
+                return "/pages/Participant-login?faces-redirect=true";
+
+            } else {
+                // ÉCHEC : Erreur lors de l'inscription
+                addMessage("Erreur lors de l'inscription. Veuillez réessayer.", FacesMessage.SEVERITY_ERROR);
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Exception lors de l'inscription: " + e.getMessage());
+            e.printStackTrace();
+            addMessage("Erreur technique: " + e.getMessage(), FacesMessage.SEVERITY_ERROR);
             return null;
         }
     }
