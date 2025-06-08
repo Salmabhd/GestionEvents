@@ -1,15 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EventMaster - Dashboard Admin</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 
-    <style type="text/css">
-        /* <![CDATA[ */
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -553,7 +550,6 @@
                 gap: 12px;
             }
         }
-        /* ]]> */
     </style>
 </head>
 
@@ -566,32 +562,32 @@
         </div>
 
         <div class="nav-menu">
-            <button class="nav-item active" type="button" onclick="window.location.href='AdminDashboard.xhtml'">
+            <button class="nav-item active">
                 <i class="fas fa-chart-pie"></i>
                 Dashboard
             </button>
 
-            <button class="nav-item" type="button" onclick="window.location.href='events.xhtml'">
+            <button class="nav-item" onclick="window.location.href='events.xhtml'">
                 <i class="fas fa-calendar-alt"></i>
                 Events
             </button>
 
-            <button class="nav-item" type="button">
+            <button class="nav-item">
                 <i class="fas fa-users"></i>
                 Attendees
             </button>
 
-            <button class="nav-item" type="button">
+            <button class="nav-item">
                 <i class="fas fa-map-marker-alt"></i>
                 Venues
             </button>
 
-            <button class="nav-item" type="button">
+            <button class="nav-item">
                 <i class="fas fa-chart-bar"></i>
                 Analytics
             </button>
 
-            <button class="nav-item" type="button">
+            <button class="nav-item">
                 <i class="fas fa-cog"></i>
                 Settings
             </button>
@@ -618,7 +614,7 @@
                     <input type="text" class="search-input" placeholder="Search events..." />
                     <i class="fas fa-search search-icon"></i>
                 </div>
-                <button class="btn-new-event" type="button">
+                <button class="btn-new-event">
                     <i class="fas fa-plus"></i>
                     New Event
                 </button>
@@ -690,7 +686,7 @@
                 <h2 class="section-title">Event Categories</h2>
                 <div class="categories-grid">
                     <div class="category-card">
-                        <button class="category-header" type="button">
+                        <button class="category-header">
                             <div class="category-top">
                                 <div class="category-icon icon-blue">
                                     <i class="fas fa-briefcase"></i>
@@ -747,7 +743,7 @@
                     </div>
 
                     <div class="category-card">
-                        <button class="category-header" type="button">
+                        <button class="category-header">
                             <div class="category-top">
                                 <div class="category-icon icon-purple">
                                     <i class="fas fa-music"></i>
@@ -783,7 +779,7 @@
                     </div>
 
                     <div class="category-card">
-                        <button class="category-header" type="button">
+                        <button class="category-header">
                             <div class="category-top">
                                 <div class="category-icon icon-green">
                                     <i class="fas fa-graduation-cap"></i>
@@ -824,7 +820,7 @@
             <div class="quick-actions">
                 <h2 class="section-title">Quick Actions</h2>
                 <div class="actions-grid">
-                    <button class="action-card" type="button">
+                    <button class="action-card">
                         <div class="action-icon icon-blue">
                             <i class="fas fa-plus"></i>
                         </div>
@@ -832,7 +828,7 @@
                         <div class="action-subtitle">Set up a new event from scratch</div>
                     </button>
 
-                    <button class="action-card" type="button">
+                    <button class="action-card">
                         <div class="action-icon icon-green">
                             <i class="fas fa-chart-line"></i>
                         </div>
@@ -840,7 +836,7 @@
                         <div class="action-subtitle">Export detailed analytics</div>
                     </button>
 
-                    <button class="action-card" type="button">
+                    <button class="action-card">
                         <div class="action-icon icon-purple">
                             <i class="fas fa-bell"></i>
                         </div>
@@ -848,7 +844,7 @@
                         <div class="action-subtitle">Notify attendees about updates</div>
                     </button>
 
-                    <button class="action-card" type="button">
+                    <button class="action-card">
                         <div class="action-icon icon-yellow">
                             <i class="fas fa-cog"></i>
                         </div>
@@ -861,21 +857,18 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    /* <![CDATA[ */
+<script>
     // Add some interactivity
-    document.querySelectorAll('.nav-item').forEach(function(item) {
+    document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
-            document.querySelectorAll('.nav-item').forEach(function(nav) {
-                nav.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             this.classList.add('active');
         });
     });
 
-    document.querySelectorAll('.category-header').forEach(function(header) {
+    document.querySelectorAll('.category-header').forEach(header => {
         header.addEventListener('click', function() {
-            var content = this.nextElementSibling;
+            const content = this.nextElementSibling;
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
             } else {
@@ -883,7 +876,6 @@
             }
         });
     });
-    /* ]]> */
 </script>
 </body>
 </html>
