@@ -1,286 +1,313 @@
 package com.example.projetsdr.controller;
 
 import com.example.projetsdr.model.Event;
-import com.example.projetsdr.model.Event.EventCategory;
-import com.example.projetsdr.model.Event.EventStatus;
 import com.example.projetsdr.service.EventService;
-
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
-@Named("eventBean")
-@ViewScoped
+@Named
+@SessionScoped
 public class EventBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Inject
     private EventService eventService;
 
-    // Propriétés pour la liste des événements
+    // Propriétés pour l'événement courant
+    private Event currentEvent;
+
+    // Listes pour l'affichage
     private List<Event> events;
     private List<Event> filteredEvents;
 
-    // Propriétés pour les filtres
-    private String selectedCategory = "all";
-    private String selectedStatus = "all";
-    private String selectedDateFilter = "all";
-    private String searchTerm = "";
+    // Propriétés pour la recherche et les filtres
+    private String searchTitle;
+    private String searchCity;
+    private Event.EventCategory selectedCategory;
+    private Event.EventStatus selectedStatus;
 
-    // Propriétés pour les statistiques
-    private Map<String, Long> eventStatistics;
+    // Propriétés pour la gestion des tickets
+    private int ticketsToSell;
 
-    // Propriétés pour l'événement sélectionné
-    private Event selectedEvent;
-    private Long selectedEventId;
-
-    // Formatters
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+    // Propriétés pour l'affichage des statistiques
+    private EventService.EventStatistics statistics;
 
     @PostConstruct
     public void init() {
-        loadEvents();
+        refreshEventList();
+        resetCurrentEvent();
         loadStatistics();
     }
 
-    // Méthodes de chargement
-    public void loadEvents() {
+    // Actions CRUD
+    public String createEvent() {
         try {
-            events = eventService.getAllEvents();
-            applyFilters();
+            eventService.createEvent(currentEvent);
+            addMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement créé avec succès");
+            refreshEventList();
+            resetCurrentEvent();
+            return "event-list?faces-redirect=true";
         } catch (Exception e) {
-            addErrorMessage("Erreur lors du chargement des événements: " + e.getMessage());
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+            return null;
         }
     }
 
-    public void loadStatistics() {
+    public String updateEvent() {
         try {
-            eventStatistics = eventService.getEventStatistics();
+            eventService.updateEvent(currentEvent);
+            addMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement mis à jour avec succès");
+            refreshEventList();
+            return "event-list?faces-redirect=true";
         } catch (Exception e) {
-            addErrorMessage("Erreur lors du chargement des statistiques: " + e.getMessage());
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+            return null;
         }
-    }
-
-    // Méthodes de filtrage
-    public void applyFilters() {
-        try {
-            filteredEvents = eventService.getEventsWithFilters(
-                    selectedCategory, selectedStatus, selectedDateFilter, searchTerm);
-        } catch (Exception e) {
-            addErrorMessage("Erreur lors de l'application des filtres: " + e.getMessage());
-            filteredEvents = events;
-        }
-    }
-
-    public void searchEvents() {
-        applyFilters();
-    }
-
-    public void resetFilters() {
-        selectedCategory = "all";
-        selectedStatus = "all";
-        selectedDateFilter = "all";
-        searchTerm = "";
-        applyFilters();
-    }
-
-    // Méthodes d'action
-    public String viewEvent(Long eventId) {
-        return "event-details?faces-redirect=true&id=" + eventId;
-    }
-
-    public String editEvent(Long eventId) {
-        return "edit-event?faces-redirect=true&id=" + eventId;
     }
 
     public void deleteEvent(Long eventId) {
         try {
             eventService.deleteEvent(eventId);
-            addSuccessMessage("Événement supprimé avec succès");
-            loadEvents();
+            addMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement supprimé avec succès");
+            refreshEventList();
             loadStatistics();
         } catch (Exception e) {
-            addErrorMessage("Erreur lors de la suppression: " + e.getMessage());
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
         }
     }
 
-    public String createNewEvent() {
-        return "create-event?faces-redirect=true";
-    }
-
-    // Méthodes utilitaires pour l'affichage
-    public String formatEventDate(Event event) {
-        if (event.getEventDate() != null) {
-            return event.getEventDate().format(dateFormatter);
-        }
-        return "";
-    }
-
-    public String getEventStatusClass(EventStatus status) {
-        switch (status) {
-            case ACTIVE:
-                return "status-active";
-            case UPCOMING:
-                return "status-upcoming";
-            case COMPLETED:
-                return "status-completed";
-            case CANCELLED:
-                return "status-cancelled";
-            default:
-                return "";
+    public void cancelEvent(Long eventId) {
+        try {
+            eventService.cancelEvent(eventId);
+            addMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement annulé avec succès");
+            refreshEventList();
+            loadStatistics();
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
         }
     }
 
-    public String getCategoryIcon(EventCategory category) {
-        switch (category) {
-            case BUSINESS:
-                return "fas fa-briefcase";
-            case ENTERTAINMENT:
-                return "fas fa-music";
-            case EDUCATION:
-                return "fas fa-graduation-cap";
-            case SPORT:
-                return "fas fa-running";
-            case SOCIAL:
-                return "fas fa-heart";
-            case TECHNOLOGY:
-                return "fas fa-laptop-code";
-            default:
-                return "fas fa-calendar";
+    // Actions de navigation
+    public String editEvent(Long eventId) {
+        try {
+            currentEvent = eventService.findById(eventId).orElse(null);
+            if (currentEvent == null) {
+                addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Événement non trouvé");
+                return null;
+            }
+            return "event-form?faces-redirect=true";
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+            return null;
         }
     }
 
-    public String getCategoryGradient(EventCategory category) {
-        switch (category) {
-            case BUSINESS:
-                return "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
-            case ENTERTAINMENT:
-                return "background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);";
-            case EDUCATION:
-                return "background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);";
-            case SPORT:
-                return "background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);";
-            case SOCIAL:
-                return "background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);";
-            case TECHNOLOGY:
-                return "background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);";
-            default:
-                return "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
+    public String viewEvent(Long eventId) {
+        try {
+            currentEvent = eventService.findById(eventId).orElse(null);
+            if (currentEvent == null) {
+                addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Événement non trouvé");
+                return null;
+            }
+            return "event-detail?faces-redirect=true";
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+            return null;
         }
     }
 
-    public boolean isEventSoldOut(Event event) {
-        return event.isSoldOut();
+    public String newEvent() {
+        resetCurrentEvent();
+        return "event-form?faces-redirect=true";
     }
 
-    public double getEventOccupancyRate(Event event) {
-        return event.getOccupancyRate();
+    // Actions de gestion des tickets
+    public void sellTickets(Long eventId) {
+        try {
+            eventService.sellTickets(eventId, ticketsToSell);
+            addMessage(FacesMessage.SEVERITY_INFO, "Succès",
+                    ticketsToSell + " ticket(s) vendu(s) avec succès");
+            refreshEventList();
+            ticketsToSell = 0;
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+        }
     }
 
-    // Méthodes pour les options de sélection
-    public EventCategory[] getAvailableCategories() {
-        return EventCategory.values();
+    // Actions de recherche et filtrage
+    public void searchEvents() {
+        try {
+            if (searchTitle != null && !searchTitle.trim().isEmpty()) {
+                filteredEvents = eventService.searchEventsByTitle(searchTitle);
+            } else if (searchCity != null && !searchCity.trim().isEmpty()) {
+                filteredEvents = eventService.findEventsByCity(searchCity);
+            } else if (selectedCategory != null) {
+                filteredEvents = eventService.findEventsByCategory(selectedCategory);
+            } else if (selectedStatus != null) {
+                filteredEvents = eventService.findEventsByStatus(selectedStatus);
+            } else {
+                filteredEvents = events;
+            }
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+        }
     }
 
-    public EventStatus[] getAvailableStatuses() {
-        return EventStatus.values();
+    public void clearFilters() {
+        searchTitle = null;
+        searchCity = null;
+        selectedCategory = null;
+        selectedStatus = null;
+        filteredEvents = events;
     }
 
-    // Méthodes utilitaires pour les messages
-    private void addSuccessMessage(String message) {
+    public void loadUpcomingEvents() {
+        try {
+            filteredEvents = eventService.findUpcomingEvents();
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+        }
+    }
+
+    public void loadPopularEvents() {
+        try {
+            filteredEvents = eventService.findMostPopularEvents(10);
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+        }
+    }
+
+    // Méthodes utilitaires
+    private void refreshEventList() {
+        try {
+            events = eventService.findAllEvents();
+            filteredEvents = events;
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Erreur lors du chargement des événements");
+        }
+    }
+
+    private void resetCurrentEvent() {
+        currentEvent = new Event();
+        currentEvent.setStatus(Event.EventStatus.UPCOMING);
+        currentEvent.setCategory(Event.EventCategory.BUSINESS);
+        currentEvent.setEventDate(LocalDateTime.now().plusDays(1));
+    }
+
+    private void loadStatistics() {
+        try {
+            statistics = eventService.getEventStatistics();
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Erreur lors du chargement des statistiques");
+        }
+    }
+
+    private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Succès", message));
-    }
-
-    private void addErrorMessage(String message) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", message));
-    }
-
-    private void addWarningMessage(String message) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Avertissement", message));
+                new FacesMessage(severity, summary, detail));
     }
 
     // Getters et Setters
-    public List<Event> getEvents() {
-        return events;
+    public Event getCurrentEvent() { return currentEvent; }
+    public void setCurrentEvent(Event currentEvent) { this.currentEvent = currentEvent; }
+
+    public List<Event> getEvents() { return events; }
+    public void setEvents(List<Event> events) { this.events = events; }
+
+    public List<Event> getFilteredEvents() { return filteredEvents; }
+    public void setFilteredEvents(List<Event> filteredEvents) { this.filteredEvents = filteredEvents; }
+
+    public String getSearchTitle() { return searchTitle; }
+    public void setSearchTitle(String searchTitle) { this.searchTitle = searchTitle; }
+
+    public String getSearchCity() { return searchCity; }
+    public void setSearchCity(String searchCity) { this.searchCity = searchCity; }
+
+    public Event.EventCategory getSelectedCategory() { return selectedCategory; }
+    public void setSelectedCategory(Event.EventCategory selectedCategory) { this.selectedCategory = selectedCategory; }
+
+    public Event.EventStatus getSelectedStatus() { return selectedStatus; }
+    public void setSelectedStatus(Event.EventStatus selectedStatus) { this.selectedStatus = selectedStatus; }
+
+    public int getTicketsToSell() { return ticketsToSell; }
+    public void setTicketsToSell(int ticketsToSell) { this.ticketsToSell = ticketsToSell; }
+
+    public EventService.EventStatistics getStatistics() { return statistics; }
+    public void setStatistics(EventService.EventStatistics statistics) { this.statistics = statistics; }
+
+    // Méthodes pour les selectItems dans les formulaires JSF
+    public List<Event.EventCategory> getEventCategories() {
+        return Arrays.asList(Event.EventCategory.values());
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
+    public List<Event.EventStatus> getEventStatuses() {
+        return Arrays.asList(Event.EventStatus.values());
     }
 
-    public List<Event> getFilteredEvents() {
-        return filteredEvents;
+    // Méthodes utilitaires pour les vues
+    public boolean isEventEditable(Event event) {
+        return event.getStatus() != Event.EventStatus.COMPLETED &&
+                event.getStatus() != Event.EventStatus.CANCELLED;
     }
 
-    public void setFilteredEvents(List<Event> filteredEvents) {
-        this.filteredEvents = filteredEvents;
+    public boolean canSellTickets(Event event) {
+        return event.getStatus() == Event.EventStatus.ACTIVE &&
+                !event.isSoldOut() &&
+                event.getEventDate().isAfter(LocalDateTime.now());
     }
 
-    public String getSelectedCategory() {
-        return selectedCategory;
+    public String getEventStatusClass(Event.EventStatus status) {
+        switch (status) {
+            case ACTIVE: return "badge-success";
+            case UPCOMING: return "badge-info";
+            case COMPLETED: return "badge-secondary";
+            case CANCELLED: return "badge-danger";
+            default: return "badge-light";
+        }
     }
 
-    public void setSelectedCategory(String selectedCategory) {
-        this.selectedCategory = selectedCategory;
-        applyFilters();
+    public String getCategoryClass(Event.EventCategory category) {
+        switch (category) {
+            case BUSINESS: return "category-business";
+            case ENTERTAINMENT: return "category-entertainment";
+            case EDUCATION: return "category-education";
+            case SPORT: return "category-sport";
+            case SOCIAL: return "category-social";
+            case TECHNOLOGY: return "category-technology";
+            default: return "category-default";
+        }
     }
+    public String formatEventDate(Event event) {
+        if (event == null || event.getEventDate() == null) {
+            return "Date non définie";
+        }
 
-    public String getSelectedStatus() {
-        return selectedStatus;
-    }
+        try {
+            // If eventDate is LocalDateTime
+            if (event.getEventDate() instanceof LocalDateTime) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
+                return ((LocalDateTime) event.getEventDate()).format(formatter);
+            }
 
-    public void setSelectedStatus(String selectedStatus) {
-        this.selectedStatus = selectedStatus;
-        applyFilters();
-    }
+            // If eventDate is java.util.Date
 
-    public String getSelectedDateFilter() {
-        return selectedDateFilter;
-    }
+            // Fallback - try to convert to string
+            return event.getEventDate().toString();
 
-    public void setSelectedDateFilter(String selectedDateFilter) {
-        this.selectedDateFilter = selectedDateFilter;
-        applyFilters();
-    }
-
-    public String getSearchTerm() {
-        return searchTerm;
-    }
-
-    public void setSearchTerm(String searchTerm) {
-        this.searchTerm = searchTerm;
-    }
-
-    public Map<String, Long> getEventStatistics() {
-        return eventStatistics;
-    }
-
-    public void setEventStatistics(Map<String, Long> eventStatistics) {
-        this.eventStatistics = eventStatistics;
-    }
-
-    public Event getSelectedEvent() {
-        return selectedEvent;
-    }
-
-    public void setSelectedEvent(Event selectedEvent) {
-        this.selectedEvent = selectedEvent;
-    }
-
-    public Long getSelectedEventId() {
-        return selectedEventId;
-    }
-
-    public void setSelectedEventId(Long selectedEventId) {
-        this.selectedEventId = selectedEventId;
+        } catch (Exception e) {
+            return "Date invalide";
+        }
     }
 }

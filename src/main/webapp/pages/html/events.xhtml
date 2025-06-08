@@ -192,41 +192,6 @@
             background: #4f46e5;
         }
 
-        /* Loading Spinner */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 60px;
-            font-size: 1.1rem;
-            color: #64748b;
-        }
-
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #6366f1;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 12px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Error State */
-        .error {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 20px;
-            text-align: center;
-        }
-
         /* Content Area */
         .content-area {
             padding: 24px;
@@ -621,7 +586,7 @@
             </div>
             <div class="header-actions">
                 <div class="search-box">
-                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher des événements..." />
+                    <input type="text" class="search-input" placeholder="Rechercher des événements..." />
                     <i class="fas fa-search search-icon"></i>
                 </div>
                 <button class="btn-new-event" onclick="window.location.href='create-event.xhtml'">
@@ -634,21 +599,21 @@
         <!-- Content Area -->
         <div class="content-area">
             <!-- Statistics Bar -->
-            <div class="stats-bar" id="statsBar">
+            <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-number" id="totalEvents">0</div>
+                    <div class="stat-number">24</div>
                     <div class="stat-label">Total Événements</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="activeEvents">0</div>
+                    <div class="stat-number">8</div>
                     <div class="stat-label">Actifs</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="upcomingEvents">0</div>
+                    <div class="stat-number">12</div>
                     <div class="stat-label">À venir</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="completedEvents">0</div>
+                    <div class="stat-number">4</div>
                     <div class="stat-label">Terminés</div>
                 </div>
             </div>
@@ -657,288 +622,279 @@
             <div class="filter-bar">
                 <div class="filter-group">
                     <label class="filter-label">Catégorie:</label>
-                    <select class="filter-select" id="categoryFilter">
-                        <option value="">Toutes les catégories</option>
-                        <option value="Business">Business</option>
-                        <option value="Entertainment">Entertainment</option>
-                        <option value="Education">Education</option>
-                        <option value="Sport">Sport</option>
-                        <option value="Social">Social</option>
+                    <select class="filter-select">
+                        <option>Toutes les catégories</option>
+                        <option>Business</option>
+                        <option>Entertainment</option>
+                        <option>Education</option>
+                        <option>Sport</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Statut:</label>
-                    <select class="filter-select" id="statusFilter">
-                        <option value="">Tous les statuts</option>
-                        <option value="active">Actif</option>
-                        <option value="upcoming">À venir</option>
-                        <option value="completed">Terminé</option>
-                        <option value="cancelled">Annulé</option>
+                    <select class="filter-select">
+                        <option>Tous les statuts</option>
+                        <option>Actif</option>
+                        <option>À venir</option>
+                        <option>Terminé</option>
+                        <option>Annulé</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Date:</label>
-                    <select class="filter-select" id="dateFilter">
-                        <option value="">Toutes les dates</option>
-                        <option value="week">Cette semaine</option>
-                        <option value="month">Ce mois</option>
-                        <option value="quarter">3 prochains mois</option>
+                    <select class="filter-select">
+                        <option>Toutes les dates</option>
+                        <option>Cette semaine</option>
+                        <option>Ce mois</option>
+                        <option>3 prochains mois</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Loading/Error/Content -->
-            <div id="loadingContainer" class="loading">
-                <div class="spinner"></div>
-                Chargement des événements...
-            </div>
-
-            <div id="errorContainer" class="error" style="display: none;">
-                <i class="fas fa-exclamation-triangle"></i>
-                Erreur lors du chargement des événements. Veuillez réessayer.
-                <button onclick="loadEvents()" style="margin-left: 10px; padding: 5px 10px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Réessayer
-                </button>
-            </div>
-
             <!-- Events Grid -->
-            <div class="events-grid" id="eventsGrid" style="display: none;">
-                <!-- Events will be populated here -->
-            </div>
+            <div class="events-grid">
+                <!-- Event Card 1 -->
+                <div class="event-card">
+                    <div class="event-image">
+                        <i class="fas fa-briefcase"></i>
+                        <div class="event-category-badge">Business</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Conférence Tech Annuelle 2025</h3>
+                        <p class="event-description">Grande conférence technologique réunissant les leaders de l'industrie pour discuter des dernières innovations et tendances.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>15 Juin 2025, 09:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Centre de Conférences, Paris</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>450 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>320 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-upcoming">
+                            <i class="fas fa-circle"></i>
+                            À venir
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=1'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=1'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(1)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Empty State -->
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <div class="empty-icon">
-                    <i class="fas fa-calendar-plus"></i>
+                <!-- Event Card 2 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-music"></i>
+                        <div class="event-category-badge">Entertainment</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Festival de Musique d'Été</h3>
+                        <p class="event-description">Festival de musique en plein air avec des artistes nationaux et internationaux dans un cadre magnifique.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>28 Juin 2025, 18:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Parc de la Ville, Lyon</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>2500 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>1850 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-active">
+                            <i class="fas fa-circle"></i>
+                            Actif
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=2'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=2'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(2)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="empty-title">Aucun événement trouvé</div>
-                <div class="empty-description">
-                    Commencez par créer votre premier événement ou modifiez vos critères de recherche.
+
+                <!-- Event Card 3 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div class="event-category-badge">Education</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Workshop Marketing Digital</h3>
+                        <p class="event-description">Formation intensive sur les stratégies de marketing digital moderne et les outils les plus efficaces.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>10 Juin 2025, 14:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Centre de Formation, Marseille</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>35 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>35 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-active">
+                            <i class="fas fa-circle"></i>
+                            Actif
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=3'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=3'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(3)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-new-event" onclick="window.location.href='create-event.xhtml'">
-                    <i class="fas fa-plus"></i>
-                    Créer un événement
-                </button>
+
+                <!-- Event Card 4 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-handshake"></i>
+                        <div class="event-category-badge">Business</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Networking Business Mixer</h3>
+                        <p class="event-description">Soirée de networking pour professionnels et entrepreneurs dans une ambiance décontractée.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>22 Juin 2025, 19:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Hôtel Ballroom, Nice</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>120 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>95 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-upcoming">
+                            <i class="fas fa-circle"></i>
+                            À venir
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=4'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=4'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(4)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 5 -->
+                <div class="event-card">
+                    <div class="event-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <i class="fas fa-heart"></i>
+                        <div class="event-category-badge">Social</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">Gala de Charité</h3>
+                        <p class="event-description">Soirée de gala pour collecter des fonds pour les associations locales d'aide à l'enfance.</p>
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>05 Mai 2025, 20:00</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Grand Théâtre, Bordeaux</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>200 participants</span>
+                            </div>
+                            <div class="event-meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>200 billets vendus</span>
+                            </div>
+                        </div>
+                        <div class="event-status status-completed">
+                            <i class="fas fa-circle"></i>
+                            Terminé
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-action btn-view" onclick="window.location.href='event-details.xhtml?id=5'">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </button>
+                            <button class="btn-action btn-edit" onclick="window.location.href='edit-event.xhtml?id=5'">
+                                <i class="fas fa-edit"></i>
+                                Modifier
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete(5)">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    // Configuration de l'API
-    const API_BASE_URL = '/api'; // Remplacez par votre URL d'API
-
-    // Variables globales
-    let allEvents = [];
-    let filteredEvents = [];
-
-    // Icônes par catégorie
-    const categoryIcons = {
-        'Business': 'fas fa-briefcase',
-        'Entertainment': 'fas fa-music',
-        'Education': 'fas fa-graduation-cap',
-        'Sport': 'fas fa-running',
-        'Social': 'fas fa-heart',
-        'Technology': 'fas fa-laptop',
-        'Health': 'fas fa-heartbeat'
-    };
-
-    // Couleurs de fond par catégorie
-    const categoryColors = {
-        'Business': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'Entertainment': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'Education': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        'Sport': 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-        'Social': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-        'Technology': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'Health': 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    };
-
-    // Fonction pour charger les événements depuis l'API
-    async function loadEvents() {
-        try {
-            showLoading();
-
-            // Remplacez cette URL par votre endpoint API
-            const response = await fetch(`${API_BASE_URL}/events`);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            allEvents = data.events || data; // Support pour différents formats de réponse
-
-            // Si aucune donnée n'est retournée, utilisez des données de démonstration
-            if (!allEvents || allEvents.length === 0) {
-                allEvents = getDemoEvents();
-            }
-
-            filteredEvents = [...allEvents];
-            updateStatistics();
-            renderEvents();
-            hideLoading();
-
-        } catch (error) {
-            console.error('Erreur lors du chargement des événements:', error);
-            showError();
-        }
-    }
-
-    // Données de démonstration (à supprimer quand l'API est prête)
-    function getDemoEvents() {
-        return [
-            {
-                id: 1,
-                title: "Conférence Tech Annuelle 2025",
-                description: "Grande conférence technologique réunissant les leaders de l'industrie pour discuter des dernières innovations et tendances.",
-                category: "Business",
-                status: "upcoming",
-                date: "2025-06-15T09:00:00",
-                location: "Centre de Conférences, Paris",
-                maxParticipants: 450,
-                ticketsSold: 320
-            },
-            {
-                id: 2,
-                title: "Festival de Musique d'Été",
-                description: "Festival de musique en plein air avec des artistes nationaux et internationaux dans un cadre magnifique.",
-                category: "Entertainment",
-                status: "active",
-                date: "2025-06-28T18:00:00",
-                location: "Parc de la Ville, Lyon",
-                maxParticipants: 2500,
-                ticketsSold: 1850
-            },
-            {
-                id: 3,
-                title: "Workshop Marketing Digital",
-                description: "Formation intensive sur les stratégies de marketing digital moderne et les outils les plus efficaces.",
-                category: "Education",
-                status: "active",
-                date: "2025-06-10T14:00:00",
-                location: "Centre de Formation, Marseille",
-                maxParticipants: 35,
-                ticketsSold: 35
-            },
-            {
-                id: 4,
-                title: "Networking Business Mixer",
-                description: "Soirée de networking pour professionnels et entrepreneurs dans une ambiance décontractée.",
-                category: "Business",
-                status: "upcoming",
-                date: "2025-06-22T19:00:00",
-                location: "Hôtel Ballroom, Nice",
-                maxParticipants: 120,
-                ticketsSold: 95
-            },
-            {
-                id: 5,
-                title: "Gala de Charité",
-                description: "Soirée de gala pour collecter des fonds pour les associations locales d'aide à l'enfance.",
-                category: "Social",
-                status: "completed",
-                date: "2025-05-05T20:00:00",
-                location: "Grand Théâtre, Bordeaux",
-                maxParticipants: 200,
-                ticketsSold: 200
-            }
-        ];
-    }
-
-    // Fonction pour afficher le loading
-    function showLoading() {
-        document.getElementById('loadingContainer').style.display = 'flex';
-        document.getElementById('errorContainer').style.display = 'none';
-        document.getElementById('eventsGrid').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'none';
-    }
-
-    // Fonction pour masquer le loading
-    function hideLoading() {
-        document.getElementById('loadingContainer').style.display = 'none';
-    }
-
-    // Fonction pour afficher l'erreur
-    function showError() {
-        document.getElementById('loadingContainer').style.display = 'none';
-        document.getElementById('errorContainer').style.display = 'block';
-        document.getElementById('eventsGrid').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'none';
-    }
-
-    // Fonction pour mettre à jour les statistiques
-    function updateStatistics() {
-        const stats = {
-            total: allEvents.length,
-            active: allEvents.filter(e => e.status === 'active').length,
-            upcoming: allEvents.filter(e => e.status === 'upcoming').length,
-            completed: allEvents.filter(e => e.status === 'completed').length
-        };
-
-        document.getElementById('totalEvents').textContent = stats.total;
-        document.getElementById('activeEvents').textContent = stats.active;
-        document.getElementById('upcomingEvents').textContent = stats.upcoming;
-        document.getElementById('completedEvents').textContent = stats.completed;
-    }
-
-    // Fonction pour formater la date
-    function formatDate(dateString) {
-        const date = new Date(dateString);
-        const options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        return date.toLocaleDateString('fr-FR', options);
-    }
-
-    // Fonction pour obtenir le texte du statut
-    function getStatusText(status) {
-        const statusTexts = {
-            'active': 'Actif',
-            'upcoming': 'À venir',
-            'completed': 'Terminé',
-            'cancelled': 'Annulé'
-        };
-        return statusTexts[status] || status;
-    }
-
-    // Fonction pour rendre les événements
-    function renderEvents() {
-        const eventsGrid = document.getElementById('eventsGrid');
-        const emptyState = document.getElementById('emptyState');
-
-        if (filteredEvents.length === 0) {
-            eventsGrid.style.display = 'none';
-            emptyState.style.display = 'block';
-            return;
-        }
-
-        eventsGrid.style.display = 'grid';
-        emptyState.style.display = 'none';
-
-        eventsGrid.innerHTML = filteredEvents.map(event => `
-        <div class="event-card">
-            <div class="event-image" style="background: ${categoryColors[event.category] || categoryColors['Business']};">
-                <i class="${categoryIcons[event.category] || 'fas fa-calendar'}"></i>
-                <div class="event-category-badge">${event.category}</div>
-            </div>
-            <div class="event-content">
-                <h3 class="event-title">${event.title}</h3>
-                <p class="event-description">${event.description}</p>
-                <div class="event-meta">
-                    <div class="event-meta-item">
-                        <i class="fas fa-calendar"></i>
-                        <span>${formatDate(event.date)}</span>
-                    </div>
-                    <div class="event-meta-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${event.location}</span>
-                    </div>
-                    <div class="event-meta-item">
-                        <i class="fas fa-users"></i>
-                        <span>${event.maxParticipants} participants</span>
-                    </div>
+</body>
+</html>
