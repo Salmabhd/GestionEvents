@@ -34,7 +34,7 @@ public class LoginBean implements Serializable {
             loggedIn = true;
             password = null;
             addMessage("Connexion réussie pour " + admin.getEmail(), FacesMessage.SEVERITY_INFO);
-            return "pages/AdminDashboard?faces-redirect=true";
+            return "/pages/AdminDashboard?faces-redirect=true";
         } else {
             addMessage("Email ou mot de passe incorrect", FacesMessage.SEVERITY_ERROR);
             return null;

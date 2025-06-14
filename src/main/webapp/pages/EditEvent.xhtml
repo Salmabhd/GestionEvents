@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>#{eventBean.currentEvent.id == null ? 'Créer un événement' : 'Modifier l\'événement'}</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .form-header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .required {
+            color: #dc3545;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .btn-group-custom {
+            gap: 0.5rem;
+        }
+        .alert-custom {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="container-fluid">
+        <div class="form-container">
+            <!-- Header -->
+            <div class="form-header">
+                <h2 class="text-primary mb-0">
+                    <i class="fas fa-calendar-plus me-2"></i>
+                    #{eventBean.currentEvent.id == null ? 'Créer un nouvel événement' : 'Modifier l\'événement'}
+                </h2>
+                <p class="text-muted mt-1 mb-0">
+                    #{eventBean.currentEvent.id == null ? 'Remplissez les informations ci-dessous pour créer un nouvel événement' : 'Modifiez les informations de l\'événement existant'}
+                </p>
+            </div>
+
+            <!-- Messages -->
+            <h:messages styleClass="alert alert-dismissible alert-custom" showDetail="true" showSummary="true">
+                <f:facet name="infoClass">alert-info</f:facet>
+                <f:facet name="warnClass">alert-warning</f:facet>
+                <f:facet name="errorClass">alert-danger</f:facet>
+            </h:messages>
+
+            <!-- Formulaire -->
+            <h:form id="eventForm">
+                <div class="row">
+                    <!-- Titre -->
+                    <div class="col-md-8 form-group">
+                        <h:outputLabel for="title" value="Titre de l'événement" styleClass="form-label fw-bold"/>
+                        <span class="required">*</span>
+                        <h:inputText id="title"
+                                     value="#{eventBean.currentEvent.title}"
+                                     styleClass="form-control"
+                                     placeholder="Ex: Conférence Tech 2025"
+                                     required="true"
+                                     requiredMessage="Le titre est obligatoire"
+                                     maxlength="200"/>
+                        <h:message for="title" styleClass="text-danger small"/>
+                    </div>
+
+                    <!-- Catégorie -->
+                    <div class="col-md-4 form-group">
+                        <h:outputLabel for="category" value="Catégorie" styleClass="form-label fw-bold"/>
+                        <span class="required">*</span>
+                        <h:selectOneMenu id="category"
+                                         value="#{eventBean.currentEvent.category}"
+                                         styleClass="form-select"
+                                         required="true"
+                                         requiredMessage="La catégorie est obligatoire">
+                            <f:selectItem itemLabel="-- Sélectionner une catégorie --" itemValue="#{null}"/>
+                            <f:selectItems value="#{eventBean.eventCategories}"
+                                           var="cat"
+                                           itemLabel="#{cat}"
+                                           itemValue="#{cat}"/>
+                        </h:selectOneMenu>
+                        <h:message for="category" styleClass="text-danger small"/>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <h:outputLabel for="description" value="Description" styleClass="form-label fw-bold"/>
+                    <h:inputTextarea id="description"
+                                     value="#{eventBean.currentEvent.description}"
+                                     styleClass="form-control"
+                                     placeholder="Décrivez votre événement en détail..."
+                                     rows="4"/>
+                </div>
+
+                <div class="row">
+                    <!-- Date et heure -->
+                    <div class="col-md-6 form-group">
+                        <h:outputLabel for="eventDate" value="Date et heure" styleClass="form-label fw-bold"/>
+                        <span class="required">*</span>
+                        <h:inputText id="eventDate"
+                                     value="#{eventBean.eventDateFormatted}"
+                                     styleClass="form-control"
+                                     type="datetime-local"
+                                     required="true"
+                                     requiredMessage="La date de l'événement est obligatoire">
+                        </h:inputText>
+                        <h:message for="eventDate" styleClass="text-danger small"/>
+                    </div>
+
+                    <!-- Statut -->
+                    <div class="col-md-6 form-group">
+                        <h:outputLabel for="status" value="Statut" styleClass="form-label fw-bold"/>
+                        <span class="required">*</span>
+                        <h:selectOneMenu id="status"
+                                         value="#{eventBean.currentEvent.status}"
+                                         styleClass="form-select"
+                                         required="true"
+                                         requiredMessage="Le statut est obligatoire">
+                            <f:selectItems value="#{eventBean.eventStatuses}"
+                                           var="status"
+                                           itemLabel="#{status}"
+                                           itemValue="#{status}"/>
+                        </h:selectOneMenu>
+                        <h:message for="status" styleClass="text-danger small"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Lieu -->
+                    <div class="col-md-8 form-group">
+                        <h:outputLabel for="venue" value="Lieu" styleClass="form-label fw-bold"/>
+                        <span class="required">*</span>
+                        <h:inputText id="venue"
+                                     value="#{eventBean.currentEvent.venue}"
+                                     styleClass="form-control"
+                                     placeholder="Ex: Centre de Conférences, Salle A"
+                                     required="true"
+                                     requiredMessage="Le lieu est obligatoire"
+                                     maxlength="300"/>
+                        <h:message for="venue" styleClass="text-danger small"/>
+                    </div>
+
+                    <!-- Ville -->
+                    <div class="col-md-4 form-group">
+                        <h:outputLabel for="city" value="Ville" styleClass="form-label fw-bold"/>
+                        <span class="required">*</span>
+                        <h:inputText id="city"
+                                     value="#{eventBean.currentEvent.city}"
+                                     styleClass="form-control"
+                                     placeholder="Ex: Casablanca"
+                                     required="true"
+                                     requiredMessage="La ville est obligatoire"
+                                     maxlength="100"/>
+                        <h:message for="city" styleClass="text-danger small"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Nombre maximum de participants -->
+                    <div class="col-md-4 form-group">
+                        <h:outputLabel for="maxParticipants" value="Participants max" styleClass="form-label fw-bold"/>
+                        <h:inputText id="maxParticipants"
+                                     value="#{eventBean.currentEvent.maxParticipants}"
+                                     styleClass="form-control"
+                                     placeholder="Ex: 100">
+                            <f:convertNumber integerOnly="true"/>
+                        </h:inputText>
+                        <h:message for="maxParticipants" styleClass="text-danger small"/>
+                    </div>
+
+                    <!-- Prix du ticket -->
+                    <div class="col-md-4 form-group">
+                        <h:outputLabel for="ticketPrice" value="Prix du ticket (MAD)" styleClass="form-label fw-bold"/>
+                        <h:inputText id="ticketPrice"
+                                     value="#{eventBean.currentEvent.ticketPrice}"
+                                     styleClass="form-control"
+                                     placeholder="Ex: 250.00">
+                            <f:convertNumber type="currency" currencySymbol=""/>
+                        </h:inputText>
+                        <h:message for="ticketPrice" styleClass="text-danger small"/>
+                    </div>
+
+                    <!-- Tickets vendus (lecture seule si modification) -->
+                    <div class="col-md-4 form-group" rendered="#{eventBean.currentEvent.id != null}">
+                        <h:outputLabel for="ticketsSold" value="Tickets vendus" styleClass="form-label fw-bold"/>
+                        <h:inputText id="ticketsSold"
+                                     value="#{eventBean.currentEvent.ticketsSold}"
+                                     styleClass="form-control"
+                                     readonly="true"
+                                     style="background-color: #f8f9fa;">
+                            <f:convertNumber integerOnly="true"/>
+                        </h:inputText>
+                    </div>
+                </div>
+
+                <!-- Informations supplémentaires pour modification -->
+                <div class="row" rendered="#{eventBean.currentEvent.id != null}">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted">Informations</h6>
+                                <p class="card-text small mb-1">
+                                    <strong>ID:</strong> #{eventBean.currentEvent.id}
+                                </p>
+                                <p class="card-text small mb-1">
+                                    <strong>Créé le:</strong>
+                                    <h:outputText value="#{eventBean.currentEvent.createdAt}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
+                                    </h:outputText>
+                                </p>
+                                <p class="card-text small mb-0" rendered="#{eventBean.currentEvent.updatedAt != null}">
+                                    <strong>Modifié le:</strong>
+                                    <h:outputText value="#{eventBean.currentEvent.updatedAt}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
+                                    </h:outputText>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3" style="border-top: 1px solid #dee2e6;">
+                    <!-- Bouton Retour -->
+                    <h:link outcome="event-list" styleClass="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Retour à la liste
+                    </h:link>
+
+                    <!-- Boutons de sauvegarde -->
+                    <div class="d-flex btn-group-custom">
+                        <h:commandButton value="Annuler"
+                                         action="event-list?faces-redirect=true"
+                                         styleClass="btn btn-secondary"
+                                         immediate="true">
+                            <i class="fas fa-times me-1"></i>
+                        </h:commandButton>
+
+                        <!-- Bouton Créer (visible uniquement en mode création) -->
+                        <h:commandButton value="Créer l'événement"
+                                         action="#{eventBean.createEvent()}"
+                                         styleClass="btn btn-primary"
+                                         rendered="#{eventBean.currentEvent.id == null}">
+                            <i class="fas fa-plus me-1"></i>
+                        </h:commandButton>
+
+                        <!-- Bouton Modifier (visible uniquement en mode modification) -->
+                        <h:commandButton value="Sauvegarder les modifications"
+                                         action="#{eventBean.editEvent()}"
+                                         styleClass="btn btn-primary"
+                                         rendered="#{eventBean.currentEvent.id != null}">
+                            <i class="fas fa-save me-1"></i>
+                        </h:commandButton>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</h:body>
+</html>

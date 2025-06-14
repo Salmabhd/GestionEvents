@@ -100,17 +100,29 @@ public class EventBean implements Serializable {
     }
 
     // Actions de navigation
-    public String editEvent(Long eventId) {
+    // Ajoutez cette méthode dans votre EventBean
+
+    public String editEvent() {
+        try {
+            eventService.updateEvent(currentEvent);
+            addMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement modifié avec succès");
+            refreshEventList();
+            return "event-list?faces-redirect=true";
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
+            return null;
+        }
+    }
+
+    // Modifiez votre méthode editEvent(Long eventId) existante pour qu'elle ne redirige plus
+    public void loadEventForEdit(Long eventId) {
         try {
             currentEvent = eventService.findById(eventId).orElse(null);
             if (currentEvent == null) {
                 addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Événement non trouvé");
-                return null;
             }
-            return "event-form?faces-redirect=true";
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Erreur", e.getMessage());
-            return null;
         }
     }
 
@@ -308,6 +320,25 @@ public class EventBean implements Serializable {
 
         } catch (Exception e) {
             return "Date invalide";
+        }
+    }
+    // Getter pour la date formatée
+    public String getEventDateFormatted() {
+        if (currentEvent == null || currentEvent.getEventDate() == null) {
+            return "";
+        }
+        return currentEvent.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+    }
+
+    // Setter pour la date depuis le formulaire
+    public void setEventDateFormatted(String dateStr) {
+        if (dateStr != null && !dateStr.trim().isEmpty()) {
+            try {
+                currentEvent.setEventDate(LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+            } catch (Exception e) {
+                // Gérer l'erreur si nécessaire
+                System.out.println("Erreur de conversion de date: " + e.getMessage());
+            }
         }
     }
 }
