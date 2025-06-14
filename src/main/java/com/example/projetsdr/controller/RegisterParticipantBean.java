@@ -16,7 +16,8 @@ import java.io.Serializable;
 @Named("registerParticipantBean")
 @RequestScoped
 public class RegisterParticipantBean implements Serializable {
-
+//commentaire
+    
     private String nom;
     private String email;
     private String password;
