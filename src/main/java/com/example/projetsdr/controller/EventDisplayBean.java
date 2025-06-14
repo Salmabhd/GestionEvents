@@ -1,6 +1,6 @@
 package com.example.projetsdr.controller;
 
-import com.example.projetsdr.model.EventEntity;
+import com.example.projetsdr.model.Event;
 import com.example.projetsdr.service.EventDisplayService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -13,7 +13,7 @@ import java.util.List;
 @ViewScoped
 public class EventDisplayBean implements Serializable {
 
-    private List<EventEntity> events;
+    private List<Event> events;
 
     @Inject
     private EventDisplayService eventService;
@@ -23,11 +23,11 @@ public class EventDisplayBean implements Serializable {
         events = eventService.getAllEvents();
     }
 
-    public List<EventEntity> getEvents() {
+    public List<Event> getEvents() {
         return events;
     }
 
-    public void reserver(EventEntity event) {
+    public void reserver(Event event) {
         System.out.println("Réservation : " + event.getTitle());
         // Logique de réservation ici
     }

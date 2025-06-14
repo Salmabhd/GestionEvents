@@ -15,20 +15,36 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <junit.version>5.11.0</junit.version>
+        <jakarta.faces.version>4.0.1</jakarta.faces.version>
+        <jakarta.ee.version>10.0.0</jakarta.ee.version>
     </properties>
 
     <dependencies>
+        <!-- Jakarta EE Web Profile API (includes CDI) -->
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>11.0.0-M4</version>
+            <version>${jakarta.ee.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Jakarta Faces (JSF) -->
+        <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+            <version>${jakarta.faces.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jakarta MVC (you had this already) -->
         <dependency>
             <groupId>jakarta.mvc</groupId>
             <artifactId>jakarta.mvc-api</artifactId>
             <version>2.1.0</version>
+            <scope>provided</scope>
         </dependency>
+
+        <!-- JUnit Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -41,6 +57,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- MySQL JDBC Driver (for your database connection) -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -49,6 +72,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
             </plugin>
         </plugins>
     </build>

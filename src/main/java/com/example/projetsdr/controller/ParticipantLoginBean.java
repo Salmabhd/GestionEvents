@@ -22,7 +22,7 @@ public class ParticipantLoginBean implements Serializable {
     private boolean loggedIn;
     private Participant currentParticipant;
 
-    @Resource(lookup = "java:/MySqlDS")
+    @Resource(lookup = "java:/MySqldms_db")
     private DataSource dataSource;
 
     public String login() {
