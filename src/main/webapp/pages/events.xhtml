@@ -972,38 +972,38 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">EventMaster</div>
+                <div class="logo">INAS Event</div>
             </div>
 
             <div class="nav-menu">
                 <button class="nav-item active">
                     <i class="fas fa-chart-pie"></i>
-                    Dashboard
+                    Accueil
                 </button>
 
                 <button class="nav-item" onclick="window.location.href='events.xhtml'">
                     <i class="fas fa-calendar-alt"></i>
-                    Events
+                    Événements
                 </button>
 
                 <button class="nav-item">
                     <i class="fas fa-users"></i>
-                    Attendees
+                    Participants
                 </button>
 
                 <button class="nav-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    Venues
+                    Lieux
                 </button>
 
                 <button class="nav-item">
                     <i class="fas fa-chart-bar"></i>
-                    Analytics
+                    Analyses
                 </button>
 
                 <button class="nav-item">
                     <i class="fas fa-cog"></i>
-                    Settings
+                    Paramètres
                 </button>
             </div>
 
@@ -1011,7 +1011,7 @@
                 <div class="user-avatar">SB</div>
                 <div class="user-info">
                     <h4>Salma Babahdi</h4>
-                    <p>Admin</p>
+                    <p>Administrateur</p>
                 </div>
             </div>
         </div>
@@ -1021,7 +1021,7 @@
             <!-- Top Header -->
             <div class="top-header">
                 <div class="header-title">
-                    <h1>Event Dashboard</h1>
+                    <h1>Gestion des Événements</h1>
                 </div>
                 <div class="header-actions">
                     <div class="search-box">
@@ -1030,7 +1030,7 @@
                     </div>
                     <button class="btn-new-event">
                         <i class="fas fa-plus"></i>
-                        New Event
+                        Nouvel événement
                     </button>
                 </div>
             </div>
@@ -1171,7 +1171,8 @@
                                             </h:commandButton>
 
                                             <h:commandButton value="Modifier"
-                                                             action="#{eventBean.editEvent(event.id)}"
+                                                             actionListener="#{eventBean.loadEventForEdit(event.id)}"
+                                                             action="EditEvent?faces-redirect=true"
                                                              styleClass="btn btn-warning"
                                                              rendered="#{eventBean.isEventEditable(event)}">
                                                 <i class="fas fa-edit me-1"></i>
