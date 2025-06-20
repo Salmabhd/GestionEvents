@@ -2,10 +2,7 @@ package com.example.projetsdr.repository;
 
 
 import com.example.projetsdr.model.Event;
-import com.example.projetsdr.model.Event.EventCategory;
-import com.example.projetsdr.model.Event.EventStatus;
 
-import com.example.projetsdr.model.EventEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -125,7 +122,6 @@ public class EventRepository {
         query.setMaxResults(limit);
         return query.getResultList();
     }
-
 
     // Vérifier si un événement existe
     public boolean existsById(Long id) {
