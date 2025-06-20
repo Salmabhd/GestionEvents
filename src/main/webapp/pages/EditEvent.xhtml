@@ -113,19 +113,85 @@
                 </div>
 
                 <div class="row">
-                    <!-- Date et heure -->
-                    <div class="col-md-6 form-group">
-                        <h:outputLabel for="eventDate" value="Date et heure" styleClass="form-label fw-bold"/>
-                        <span class="required">*</span>
-                        <h:inputText id="eventDate"
-                                     value="#{eventBean.eventDateFormatted}"
-                                     styleClass="form-control"
-                                     type="datetime-local"
-                                     required="true"
-                                     requiredMessage="La date de l'événement est obligatoire">
-                        </h:inputText>
-                        <h:message for="eventDate" styleClass="text-danger small"/>
-                    </div>
+                    <!-- Date et Heure en mode création -->
+                    <h:panelGroup rendered="#{eventBean.currentEvent.id == null}">
+                        <div class="col-md-3 form-group">
+                            <h:outputLabel for="eventDate" value="Date" styleClass="form-label fw-bold"/>
+                            <span class="required">*</span>
+                            <h:inputText id="eventDate"
+                                         value="#{eventBean.eventDateOnly}"
+                                         styleClass="form-control"
+                                         type="date"
+                                         required="true"
+                                         requiredMessage="La date est obligatoire">
+                                <!-- AJAX simplifié avec process="@this" au lieu de execute -->
+                                <f:ajax event="blur"
+                                        listener="#{eventBean.updateEventDateTime}"
+                                        process="@this eventTime"
+                                        render="@none"
+                                        onevent="function(data) { if(data.status === 'success') console.log('Date mise à jour'); }"/>
+                            </h:inputText>
+                            <h:message for="eventDate" styleClass="text-danger small"/>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                            <h:outputLabel for="eventTime" value="Heure" styleClass="form-label fw-bold"/>
+                            <span class="required">*</span>
+                            <h:inputText id="eventTime"
+                                         value="#{eventBean.eventTimeOnly}"
+                                         styleClass="form-control"
+                                         type="time"
+                                         required="true"
+                                         requiredMessage="L'heure est obligatoire">
+                                <!-- AJAX simplifié -->
+                                <f:ajax event="blur"
+                                        listener="#{eventBean.updateEventDateTime}"
+                                        process="@this eventDate"
+                                        render="@none"
+                                        onevent="function(data) { if(data.status === 'success') console.log('Heure mise à jour'); }"/>
+                            </h:inputText>
+                            <h:message for="eventTime" styleClass="text-danger small"/>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Date et heure en mode modification -->
+                    <h:panelGroup rendered="#{eventBean.currentEvent.id != null}">
+                        <div class="col-md-3 form-group">
+                            <h:outputLabel for="eventDateEdit" value="Date" styleClass="form-label fw-bold"/>
+                            <span class="required">*</span>
+                            <h:inputText id="eventDateEdit"
+                                         value="#{eventBean.eventDateOnly}"
+                                         styleClass="form-control"
+                                         type="date"
+                                         required="true"
+                                         requiredMessage="La date est obligatoire">
+                                <!-- AJAX simplifié pour la modification -->
+                                <f:ajax event="blur"
+                                        listener="#{eventBean.updateEventDateTime}"
+                                        process="@this eventTimeEdit"
+                                        render="@none"/>
+                            </h:inputText>
+                            <h:message for="eventDateEdit" styleClass="text-danger small"/>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                            <h:outputLabel for="eventTimeEdit" value="Heure" styleClass="form-label fw-bold"/>
+                            <span class="required">*</span>
+                            <h:inputText id="eventTimeEdit"
+                                         value="#{eventBean.eventTimeOnly}"
+                                         styleClass="form-control"
+                                         type="time"
+                                         required="true"
+                                         requiredMessage="L'heure est obligatoire">
+                                <!-- AJAX simplifié pour la modification -->
+                                <f:ajax event="blur"
+                                        listener="#{eventBean.updateEventDateTime}"
+                                        process="@this eventDateEdit"
+                                        render="@none"/>
+                            </h:inputText>
+                            <h:message for="eventTimeEdit" styleClass="text-danger small"/>
+                        </div>
+                    </h:panelGroup>
 
                     <!-- Statut -->
                     <div class="col-md-6 form-group">
@@ -219,20 +285,8 @@
                         <div class="card bg-light">
                             <div class="card-body">
                                 <h6 class="card-title text-muted">Informations</h6>
-                                <p class="card-text small mb-1">
+                                <p class="card-text small mb-0">
                                     <strong>ID:</strong> #{eventBean.currentEvent.id}
-                                </p>
-                                <p class="card-text small mb-1">
-                                    <strong>Créé le:</strong>
-                                    <h:outputText value="#{eventBean.currentEvent.createdAt}">
-                                        <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-                                    </h:outputText>
-                                </p>
-                                <p class="card-text small mb-0" rendered="#{eventBean.currentEvent.updatedAt != null}">
-                                    <strong>Modifié le:</strong>
-                                    <h:outputText value="#{eventBean.currentEvent.updatedAt}">
-                                        <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-                                    </h:outputText>
                                 </p>
                             </div>
                         </div>
@@ -260,7 +314,8 @@
                         <h:commandButton value="Créer l'événement"
                                          action="#{eventBean.createEvent()}"
                                          styleClass="btn btn-primary"
-                                         rendered="#{eventBean.currentEvent.id == null}">
+                                         rendered="#{eventBean.currentEvent.id == null}"
+                                         onclick="if(confirm('Êtes-vous sûr de vouloir créer cet événement ?')) { return true; } else { return false; }">
                             <i class="fas fa-plus me-1"></i>
                         </h:commandButton>
 
@@ -268,7 +323,8 @@
                         <h:commandButton value="Sauvegarder les modifications"
                                          action="#{eventBean.editEvent()}"
                                          styleClass="btn btn-primary"
-                                         rendered="#{eventBean.currentEvent.id != null}">
+                                         rendered="#{eventBean.currentEvent.id != null}"
+                                         onclick="if(confirm('Êtes-vous sûr de vouloir sauvegarder les modifications ?')) { return true; } else { return false; }">
                             <i class="fas fa-save me-1"></i>
                         </h:commandButton>
                     </div>

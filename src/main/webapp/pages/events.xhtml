@@ -1090,150 +1090,141 @@
                     </div>
                 </div>
                 <div class="events-container">
-                <!-- Events Grid - Remplacé par JSF -->
-                  <h:form id="eventsList">
-                    <!-- Events Grid -->
-                    <div class="events-grid">
-                        <ui:repeat value="#{eventBean.filteredEvents}" var="event">
-                            <div class="event-card">
-                                <!-- Event Category Header -->
-                                <div class="event-card-header category-#{event.category}">
-                                    <div class="category-badge">
-                                        <i class="fas fa-tag"></i>
-                                        #{event.category.displayName}
+                    <!-- Events Grid - Remplacé par JSF -->
+                    <h:form id="eventsList">
+                        <!-- Events Grid -->
+                        <div class="events-grid">
+                            <ui:repeat value="#{eventBean.events}" var="event">
+                                <div class="event-card">
+                                    <!-- Event Category Header -->
+                                    <div class="event-card-header category-#{event.category}">
+                                        <div class="category-badge">
+                                            <i class="fas fa-tag"></i>
+                                            #{event.category.displayName}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Event Body -->
-                                <div class="event-card-body">
-                                    <!-- Event Header with Title and Status -->
-                                    <div class="event-header">
-                                        <h3 class="event-title">#{event.title}</h3>
-                                        <span class="status-badge status-#{event.status}">
+                                    <!-- Event Body -->
+                                    <div class="event-card-body">
+                                        <!-- Event Header with Title and Status -->
+                                        <div class="event-header">
+                                            <h3 class="event-title">#{event.title}</h3>
+                                            <span class="status-badge status-#{event.status}">
                                     #{event.status.displayName}
                                 </span>
-                                    </div>
-
-                                    <!-- Event Description -->
-                                    <p class="event-description">
-                                        <h:outputText value="#{event.description != null and event.description.length() > 120 ?
-                                    event.description.substring(0, 120).concat('...') : event.description}" />
-                                    </p>
-
-                                    <!-- Event Details -->
-                                    <div class="event-details">
-                                        <div class="event-detail-item">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            <span>#{event.fullLocation}</span>
                                         </div>
 
-                                        <div class="event-detail-item"
-                                             style="#{event.ticketPrice != null ? '' : 'display:none'}">
-                                            <i class="fas fa-ticket-alt"></i>
-                                            <span class="price-highlight">
+                                        <!-- Event Description -->
+                                        <p class="event-description">
+                                            <h:outputText value="#{event.description != null and event.description.length() > 120 ?
+                                    event.description.substring(0, 120).concat('...') : event.description}" />
+                                        </p>
+
+                                        <!-- Event Details -->
+                                        <div class="event-details">
+                                            <div class="event-detail-item">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <strong>Date :</strong>
+                                                <span>#{event.eventDate}</span>
+                                            </div>
+                                            <div class="event-detail-item">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span>#{event.fullLocation}</span>
+                                            </div>
+                                            <div class="event-detail-item"
+                                                 style="#{event.ticketPrice != null ? '' : 'display:none'}">
+                                                <i class="fas fa-ticket-alt"></i>
+                                                <span class="price-highlight">
                                         <h:outputText value="#{event.ticketPrice}">
-                                            <f:convertNumber type="currency" currencySymbol="€"/>
+                                            <f:convertNumber type="currency" currencySymbol="DH"/>
                                         </h:outputText>
                                     </span>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Occupancy Progress -->
-                                    <div class="occupancy-section"
-                                         style="#{event.maxParticipants != null ? '' : 'display:none'}">
-                                        <div class="occupancy-header">
-                                            <span class="occupancy-label">Taux d'occupation</span>
-                                            <span class="occupancy-stats">
+                                        <!-- Occupancy Progress -->
+                                        <div class="occupancy-section"
+                                             style="#{event.maxParticipants != null ? '' : 'display:none'}">
+                                            <div class="occupancy-header">
+                                                <span class="occupancy-label">Taux d'occupation</span>
+                                                <span class="occupancy-stats">
                                         #{event.ticketsSold}/#{event.maxParticipants}
-                                                (<h:outputText value="#{event.occupancyRate}">
+                                                    (<h:outputText value="#{event.occupancyRate}">
                                             <f:convertNumber pattern="#0.0"/>
                                         </h:outputText>%)
                                     </span>
-                                        </div>
-                                        <div class="progress-container">
-                                            <div class="progress-bar progress-#{event.occupancyRate > 80 ? 'danger' :
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar progress-#{event.occupancyRate > 80 ? 'danger' :
                                         event.occupancyRate > 50 ? 'warning' : 'success'}"
-                                                 style="width: #{event.occupancyRate}%">
+                                                     style="width: #{event.occupancyRate}%">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Event Actions Footer -->
-                                <div class="event-card-footer">
-                                    <div class="action-buttons">
-                                        <!-- Primary Action Buttons -->
-                                        <div class="button-group">
-                                            <h:commandButton value="Consulter"
-                                                             action="#{eventBean.viewEvent(event.id)}"
-                                                             styleClass="btn btn-primary">
-                                                <i class="fas fa-eye me-1"></i>
-                                            </h:commandButton>
+                                    <!-- Event Actions Footer -->
+                                    <div class="event-card-footer">
+                                        <div class="action-buttons">
+                                            <!-- Primary Action Buttons -->
+                                            <div class="button-group">
+                                                <h:commandButton value="Consulter"
+                                                                 action="#{eventBean.viewEvent(event.id)}"
+                                                                 styleClass="btn btn-primary">
+                                                    <i class="fas fa-eye me-1"></i>
+                                                </h:commandButton>
 
-                                            <h:commandButton value="Modifier"
-                                                             actionListener="#{eventBean.loadEventForEdit(event.id)}"
-                                                             action="EditEvent?faces-redirect=true"
-                                                             styleClass="btn btn-warning"
-                                                             rendered="#{eventBean.isEventEditable(event)}">
-                                                <i class="fas fa-edit me-1"></i>
-                                            </h:commandButton>
+                                                <h:commandButton value="Modifier"
+                                                                 actionListener="#{eventBean.loadEventForEdit(event.id)}"
+                                                                 action="EditEvent?faces-redirect=true"
+                                                                 styleClass="btn btn-warning"
+                                                                 rendered="#{eventBean.isEventEditable(event)}">
+                                                    <i class="fas fa-edit me-1"></i>
+                                                </h:commandButton>
 
-                                            <h:commandButton value="Supprimer"
-                                                             action="#{eventBean.deleteEvent(event.id)}"
-                                                             styleClass="btn btn-danger"
-                                                             onclick="return confirm('Confirmer la suppression de cet événement ?');"
-                                                             rendered="#{eventBean.isEventEditable(event)}">
+                                                <h:commandButton value="Supprimer"
+                                                                 action="#{eventBean.deleteEvent(event.id)}"
+                                                                 styleClass="btn btn-danger"
+                                                                 onclick="return confirm('Confirmer la suppression de cet événement ?');"
+                                                                 rendered="#{eventBean.isEventEditable(event)}">
+                                                    <f:ajax render="eventsList"/>
+                                                    <i class="fas fa-trash me-1"></i>
+                                                </h:commandButton>
+                                            </div>
+
+                                            <!-- Ticket Sales Section -->
+
+
+                                            <!-- Cancel Event Button -->
+                                            <h:commandButton value="Annuler l'événement"
+                                                             action="#{eventBean.cancelEvent(event.id)}"
+                                                             styleClass="btn btn-danger cancel-event-btn"
+                                                             rendered="#{event.status.name() == 'ACTIVE' or event.status.name() == 'UPCOMING'}"
+                                                             onclick="return confirm('Confirmer l\'annulation de cet événement ?');">
                                                 <f:ajax render="eventsList"/>
-                                                <i class="fas fa-trash me-1"></i>
+                                                <i class="fas fa-ban me-1"></i>
                                             </h:commandButton>
                                         </div>
-
-                                        <!-- Ticket Sales Section -->
-                                        <div class="ticket-sales"
-                                             style="#{eventBean.canSellTickets(event) ? '' : 'display:none'}">
-                                            <h:inputText value="#{eventBean.ticketsToSell}"
-                                                         styleClass="ticket-input"
-                                                         placeholder="Nombre de tickets">
-                                                <f:convertNumber integerOnly="true"/>
-                                            </h:inputText>
-                                            <h:commandButton value="Vendre"
-                                                             action="#{eventBean.sellTickets(event.id)}"
-                                                             styleClass="btn btn-success">
-                                                <f:ajax render="eventsList"/>
-                                                <i class="fas fa-shopping-cart me-1"></i>
-                                            </h:commandButton>
-                                        </div>
-
-                                        <!-- Cancel Event Button -->
-                                        <h:commandButton value="Annuler l'événement"
-                                                         action="#{eventBean.cancelEvent(event.id)}"
-                                                         styleClass="btn btn-danger cancel-event-btn"
-                                                         rendered="#{event.status.name() == 'ACTIVE' or event.status.name() == 'UPCOMING'}"
-                                                         onclick="return confirm('Confirmer l\'annulation de cet événement ?');">
-                                            <f:ajax render="eventsList"/>
-                                            <i class="fas fa-ban me-1"></i>
-                                        </h:commandButton>
                                     </div>
                                 </div>
-                            </div>
-                        </ui:repeat>
-                    </div>
+                            </ui:repeat>
+                        </div>
 
-                    <!-- Empty State -->
-                    <div class="empty-state" style="#{empty eventBean.filteredEvents ? '' : 'display:none'}">
-                        <i class="fas fa-calendar-times empty-icon"></i>
-                        <h2 class="empty-title">Aucun événement trouvé</h2>
-                        <p class="empty-description">
-                            Il n'y a actuellement aucun événement correspondant à vos critères de recherche.
-                            Vous pouvez ajuster vos filtres ou créer un nouvel événement.
-                        </p>
-                        <h:commandButton value="Créer un nouvel événement"
-                                         action="#{eventBean.newEvent()}"
-                                         styleClass="btn-create-event">
-                            <i class="fas fa-plus me-2"></i>
-                        </h:commandButton>
-                    </div>
-                </h:form>
+                        <!-- Empty State -->
+                        <div class="empty-state" style="#{empty eventBean.filteredEvents ? '' : 'display:none'}">
+                            <i class="fas fa-calendar-times empty-icon"></i>
+                            <h2 class="empty-title">Aucun événement trouvé</h2>
+                            <p class="empty-description">
+                                Il n'y a actuellement aucun événement correspondant à vos critères de recherche.
+                                Vous pouvez ajuster vos filtres ou créer un nouvel événement.
+                            </p>
+                            <h:commandButton value="Créer un nouvel événement"
+                                             action="#{eventBean.newEvent()}"
+                                             styleClass="btn-create-event">
+                                <i class="fas fa-plus me-2"></i>
+                            </h:commandButton>
+                        </div>
+                    </h:form>
                 </div>
             </div>
         </div>

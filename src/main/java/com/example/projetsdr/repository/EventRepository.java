@@ -2,8 +2,6 @@ package com.example.projetsdr.repository;
 
 
 import com.example.projetsdr.model.Event;
-import com.example.projetsdr.model.Event.EventCategory;
-import com.example.projetsdr.model.Event.EventStatus;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
