@@ -50,6 +50,7 @@ public class EventBean implements Serializable {
 
     // Propriétés pour l'affichage des statistiques
     private EventService.EventStatistics statistics;
+    private String eventDateOnly;
 
     @PostConstruct
     public void init() {

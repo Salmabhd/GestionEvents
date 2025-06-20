@@ -14,6 +14,6 @@ public class EventDataRepository {
     private EntityManager em;
 
     public List<EventEntity> findAll() {
-        return em.createQuery("SELECT e FROM Event e", EventEntity.class).getResultList();
+        return em.createQuery("SELECT e FROM EventEntity e", EventEntity.class).getResultList();
     }
 }
