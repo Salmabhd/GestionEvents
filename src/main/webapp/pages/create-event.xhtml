@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="fr">
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Créer un Événement</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow:
+                    0 20px 40px rgba(0,0,0,0.1),
+                    0 0 0 1px rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        h1 {
+            color: #1a202c;
+            text-align: center;
+            margin-bottom: 35px;
+            font-weight: 700;
+            font-size: 2.2em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            color: #2d3748;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow:
+                    0 0 0 4px rgba(102, 126, 234, 0.1),
+                    0 4px 20px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-control:hover {
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        .form-control.error {
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-return {
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            display: block;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(160, 174, 192, 0.3);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-return:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(160, 174, 192, 0.4);
+        }
+
+        .required-field::after {
+            content: " *";
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 18px;
+            padding-right: 50px;
+        }
+
+        .price-container {
+            position: relative;
+        }
+
+        .price-container::before {
+            content: "€";
+            position: absolute;
+            left: 18px;
+            top: 50px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 1;
+        }
+
+        .price-input {
+            padding-left: 45px !important;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .button-group .btn-submit {
+            margin-top: 0;
+        }
+
+        .button-group .btn-return {
+            margin-top: 0;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .flex-row > div {
+            flex: 1;
+        }
+
+        .messages {
+            margin-bottom: 25px;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fff5f5, #fed7d7);
+            border: 1px solid #fc8181;
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #c53030;
+            margin-bottom: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(197, 48, 48, 0.1);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #f0fff4, #9ae6b4);
+            border: 1px solid #68d391;
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #276749;
+            margin-bottom: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(39, 103, 73, 0.1);
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 8px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .char-counter {
+            font-size: 12px;
+            color: #a0aec0;
+            text-align: right;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* Animations améliorées */
+        .form-group {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Effets de focus améliorés */
+        .form-control::placeholder {
+            color: #a0aec0;
+            font-weight: 500;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Responsive design amélioré */
+        @media (max-width: 600px) {
+            .flex-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            body {
+                padding: 15px;
+            }
+
+            .form-container {
+                padding: 25px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .form-control {
+                padding: 14px 16px;
+            }
+
+            .btn-submit, .btn-return {
+                padding: 16px 30px;
+            }
+        }
+
+        /* Effets de survol pour les éléments interactifs */
+        .form-group:hover label {
+            color: #667eea;
+            transition: color 0.3s ease;
+        }
+
+        /* Style pour les champs requis */
+        .required-field {
+            position: relative;
+        }
+
+        .required-field::before {
+            content: "";
+            position: absolute;
+            left: -10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+
+        /* Amélioration du style des select */
+        select.form-control:hover {
+            background-color: #f7fafc;
+        }
+
+        /* Bordures colorées pour les différents types de champs */
+        #title:focus, #venue:focus, #city:focus {
+            border-color: #667eea;
+        }
+
+        #date:focus, #heure:focus {
+            border-color: #764ba2;
+        }
+
+        #maxParticipants:focus, #ticketPrice:focus {
+            border-color: #38b2ac;
+        }
+
+        #description:focus {
+            border-color: #ed8936;
+        }
+    </style>
+    <script type="text/javascript">
+        //<![CDATA[
+        function updateCharCounter(textArea, counterId, maxLength) {
+            const counter = document.getElementById(counterId);
+            const remaining = maxLength - textArea.value.length;
+            counter.textContent = remaining + ' caractères restants';
+            counter.style.color = remaining < 50 ? '#e53e3e' : '#a0aec0';
+        }
+        //]]>
+    </script>
+</h:head>
+<h:body>
+    <div class="form-container">
+        <h1>Créer un Événement</h1>
+
+        <h:messages id="messages" styleClass="messages"
+                    errorClass="error-message"
+                    infoClass="success-message"
+                    globalOnly="false"
+                    showDetail="true"
+                    showSummary="true" />
+
+        <h:form id="eventForm">
+
+            <!-- Titre -->
+            <div class="form-group">
+                <h:outputLabel for="title" value="Titre de l'événement" styleClass="required-field" />
+                <h:inputText id="title"
+                             value="#{ajouterEvenementBean.title}"
+                             styleClass="form-control"
+                             maxlength="200" />
+                <div class="form-help">Maximum 200 caractères</div>
+            </div>
+
+            <!-- Date et Heure -->
+            <div class="form-group flex-row">
+                <div>
+                    <h:outputLabel for="date" value="Date" styleClass="required-field" />
+                    <h:inputText id="date"
+                                 value="#{ajouterEvenementBean.date}"
+                                 styleClass="form-control"
+                                 placeholder="JJ/MM/AAAA" />
+                    <div class="form-help">Format: JJ/MM/AAAA ou JJ-MM-AAAA</div>
+                </div>
+                <div>
+                    <h:outputLabel for="heure" value="Heure" styleClass="required-field" />
+                    <h:inputText id="heure"
+                                 value="#{ajouterEvenementBean.heure}"
+                                 styleClass="form-control"
+                                 placeholder="HH:mm" />
+                    <div class="form-help">Format: HH:mm (24h)</div>
+                </div>
+            </div>
+
+            <!-- Lieu et Ville -->
+            <div class="form-group flex-row">
+                <div>
+                    <h:outputLabel for="venue" value="Lieu" styleClass="required-field" />
+                    <h:inputText id="venue"
+                                 value="#{ajouterEvenementBean.venue}"
+                                 styleClass="form-control"
+                                 maxlength="300" />
+                    <div class="form-help">Maximum 300 caractères</div>
+                </div>
+                <div>
+                    <h:outputLabel for="city" value="Ville" styleClass="required-field" />
+                    <h:inputText id="city"
+                                 value="#{ajouterEvenementBean.city}"
+                                 styleClass="form-control"
+                                 maxlength="100" />
+                    <div class="form-help">Maximum 100 caractères</div>
+                </div>
+            </div>
+
+            <!-- Nombre maximum de participants -->
+            <div class="form-group">
+                <h:outputLabel for="maxParticipants" value="Nombre maximum de participants" styleClass="required-field" />
+                <h:inputText id="maxParticipants"
+                             value="#{ajouterEvenementBean.maxParticipants}"
+                             styleClass="form-control" />
+                <div class="form-help">Nombre entier entre 1 et 100 000</div>
+            </div>
+
+            <!-- Catégorie -->
+            <div class="form-group">
+                <h:outputLabel for="category" value="Catégorie" />
+                <h:selectOneMenu id="category"
+                                 value="#{ajouterEvenementBean.category}"
+                                 styleClass="form-control">
+                    <f:selectItem itemLabel="Sélectionnez une catégorie..." itemValue="" />
+                    <f:selectItems value="#{ajouterEvenementBean.categories}"
+                                   var="cat"
+                                   itemLabel="#{cat.displayName}"
+                                   itemValue="#{cat.name()}" />
+                </h:selectOneMenu>
+                <div class="form-help">Si aucune catégorie n'est sélectionnée, "Social" sera utilisé par défaut</div>
+            </div>
+
+            <!-- Statut -->
+            <div class="form-group">
+                <h:outputLabel for="status" value="Statut" />
+                <h:selectOneMenu id="status"
+                                 value="#{ajouterEvenementBean.status}"
+                                 styleClass="form-control"
+                                 required="true"
+                                 requiredMessage="Le statut est obligatoire">
+                    <f:selectItem itemLabel="Sélectionnez un statut..." itemValue="" />
+                    <f:selectItems value="#{ajouterEvenementBean.statuses}"
+                                   var="stat"
+                                   itemLabel="#{stat.displayName}"
+                                   itemValue="#{stat.name()}" />
+                </h:selectOneMenu>
+            </div>
+
+            <!-- Prix du billet -->
+            <div class="form-group price-container">
+                <h:outputLabel for="ticketPrice" value="Prix du billet (optionnel)" />
+                <h:inputText id="ticketPrice"
+                             value="#{ajouterEvenementBean.ticketPrice}"
+                             styleClass="form-control price-input"
+                             placeholder="0,00" />
+                <div class="form-help">Laissez vide pour un événement gratuit. Maximum 10 000€</div>
+            </div>
+
+            <!-- Description (optionnel) -->
+            <div class="form-group">
+                <h:outputLabel for="description" value="Description (optionnel)" />
+                <h:inputTextarea id="description"
+                                 value="#{ajouterEvenementBean.description}"
+                                 styleClass="form-control"
+                                 maxlength="5000"
+                                 rows="5"
+                                 onkeyup="updateCharCounter(this, 'desc-counter', 5000)" />
+                <div id="desc-counter" class="char-counter">5000 caractères restants</div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="button-group">
+                <h:commandButton value="Créer l'événement"
+                                 action="#{ajouterEvenementBean.ajouterEvenement}"
+                                 styleClass="btn-submit" />
+                <h:button value="Retour aux événements"
+                          outcome="/pages/events.xhtml"
+                          styleClass="btn-return" />
+            </div>
+
+        </h:form>
+    </div>
+</h:body>
+</html>
