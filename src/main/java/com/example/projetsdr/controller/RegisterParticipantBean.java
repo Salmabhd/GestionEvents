@@ -22,7 +22,7 @@ public class RegisterParticipantBean implements Serializable {
     private String password;
     private String confirmPassword;
 
-    @Resource(lookup = "java:/MySqlDS")
+    @Resource(lookup = "java:/MySqldms_db")
     private DataSource dataSource;
 
     public String register() {

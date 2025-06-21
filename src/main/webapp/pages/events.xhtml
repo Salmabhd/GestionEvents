@@ -1028,10 +1028,12 @@
                         <input type="text" class="search-input" placeholder="Search events..." />
                         <i class="fas fa-search search-icon"></i>
                     </div>
-                    <button class="btn-new-event">
-                        <i class="fas fa-plus"></i>
-                        Nouvel événement
-                    </button>
+                    <a href="create-event.xhtml">
+                        <button class="btn-new-event">
+                            <i class="fas fa-plus"></i>
+                            Nouvel événement
+                        </button>
+                    </a>
                 </div>
             </div>
 
@@ -1218,11 +1220,13 @@
                                 Il n'y a actuellement aucun événement correspondant à vos critères de recherche.
                                 Vous pouvez ajuster vos filtres ou créer un nouvel événement.
                             </p>
-                            <h:commandButton value="Créer un nouvel événement"
-                                             action="#{eventBean.newEvent()}"
-                                             styleClass="btn-create-event">
+                            <h:button value="Créer un nouvel événement"
+                                      outcome="pages/create-event.xhtml"
+                                      styleClass="btn-create-event">
                                 <i class="fas fa-plus me-2"></i>
-                            </h:commandButton>
+                            </h:button>
+
+
                         </div>
                     </h:form>
                 </div>
