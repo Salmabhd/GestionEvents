@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="fr">
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Créer un Événement</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            line-height: 1.6;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .form-control.error {
+            border-color: #e74c3c;
+        }
+        .btn-submit {
+            background-color: #3498db;
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .btn-submit:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        .btn-return {
+            background-color: #95a5a6;
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s, transform 0.1s;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+        .btn-return:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-1px);
+        }
+        .required-field::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 36px;
+        }
+        .price-container {
+            position: relative;
+        }
+        .price-container::before {
+            content: "€";
+            position: absolute;
+            left: 12px;
+            top: 42px;
+            color: #7f8c8d;
+            font-weight: bold;
+            z-index: 1;
+        }
+        .price-input {
+            padding-left: 30px !important;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .button-group .btn-submit {
+            margin-top: 0;
+        }
+        .button-group .btn-return {
+            margin-top: 0;
+        }
+        .flex-row {
+            display: flex;
+            gap: 15px;
+        }
+        .flex-row > div {
+            flex: 1;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .error-message {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 6px;
+            padding: 12px;
+            color: #c53030;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .success-message {
+            background-color: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 6px;
+            padding: 12px;
+            color: #276749;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .form-help {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .char-counter {
+            font-size: 12px;
+            color: #a0aec0;
+            text-align: right;
+            margin-top: 5px;
+        }
+        @media (max-width: 600px) {
+            .flex-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+            body {
+                padding: 10px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+        //<![CDATA[
+        function updateCharCounter(textArea, counterId, maxLength) {
+            const counter = document.getElementById(counterId);
+            const remaining = maxLength - textArea.value.length;
+            counter.textContent = remaining + ' caractères restants';
+            counter.style.color = remaining < 50 ? '#e53e3e' : '#a0aec0';
+        }
+        //]]>
+    </script>
+</h:head>
+<h:body>
+    <div class="form-container">
+        <h1>Créer un Événement</h1>
+
+        <!-- Messages de succès/erreur -->
+        <h:messages id="messages" styleClass="messages"
+                    errorClass="error-message"
+                    infoClass="success-message"
+                    globalOnly="false"
+                    showDetail="true"
+                    showSummary="true"/>
+
+        <h:form id="eventForm">
+            <!-- Titre -->
+            <div class="form-group">
+                <h:outputLabel for="title" value="Titre de l'événement" styleClass="required-field" />
+                <h:inputText id="title"
+                             value="#{ajouterEvenementBean.title}"
+                             styleClass="form-control"
+                             maxlength="200" />
+                <div class="form-help">Maximum 200 caractères</div>
+            </div>
+
+            <!-- Date et Heure -->
+            <div class="form-group flex-row">
+                <div>
+                    <h:outputLabel for="date" value="Date" styleClass="required-field" />
+                    <h:inputText id="date"
+                                 value="#{ajouterEvenementBean.date}"
+                                 styleClass="form-control"
+                                 placeholder="JJ/MM/AAAA" />
+                    <div class="form-help">Format: JJ/MM/AAAA ou JJ-MM-AAAA</div>
+                </div>
+                <div>
+                    <h:outputLabel for="heure" value="Heure" styleClass="required-field" />
+                    <h:inputText id="heure"
+                                 value="#{ajouterEvenementBean.heure}"
+                                 styleClass="form-control"
+                                 placeholder="HH:MM" />
+                    <div class="form-help">Format: HH:MM (24h)</div>
+                </div>
+            </div>
+
+            <!-- Lieu et Ville -->
+            <div class="form-group flex-row">
+                <div>
+                    <h:outputLabel for="venue" value="Lieu" styleClass="required-field" />
+                    <h:inputText id="venue"
+                                 value="#{ajouterEvenementBean.venue}"
+                                 styleClass="form-control"
+                                 maxlength="300" />
+                    <div class="form-help">Maximum 300 caractères</div>
+                </div>
+                <div>
+                    <h:outputLabel for="city" value="Ville" styleClass="required-field" />
+                    <h:inputText id="city"
+                                 value="#{ajouterEvenementBean.city}"
+                                 styleClass="form-control"
+                                 maxlength="100" />
+                    <div class="form-help">Maximum 100 caractères</div>
+                </div>
+            </div>
+
+            <!-- Nombre maximum de participants -->
+            <div class="form-group">
+                <h:outputLabel for="maxParticipants" value="Nombre maximum de participants" styleClass="required-field" />
+                <h:inputText id="maxParticipants"
+                             value="#{ajouterEvenementBean.maxParticipants}"
+                             styleClass="form-control" />
+                <div class="form-help">Nombre entier entre 1 et 100 000</div>
+            </div>
+
+            <!-- Catégorie -->
+            <div class="form-group">
+                <h:outputLabel for="category" value="Catégorie" />
+                <h:selectOneMenu id="category"
+                                 value="#{ajouterEvenementBean.category}"
+                                 styleClass="form-control">
+                    <f:selectItem itemLabel="Sélectionnez une catégorie..." itemValue="" />
+                    <f:selectItem itemLabel="Technologie" itemValue="technology" />
+                    <f:selectItem itemLabel="Théâtre" itemValue="theatre" />
+                    <f:selectItem itemLabel="Concert" itemValue="concert" />
+                    <f:selectItem itemLabel="Fête" itemValue="party" />
+                    <f:selectItem itemLabel="Conférence" itemValue="conference" />
+                    <f:selectItem itemLabel="Sport" itemValue="sport" />
+                    <f:selectItem itemLabel="Art" itemValue="art" />
+                    <f:selectItem itemLabel="Cinéma" itemValue="cinema" />
+                    <f:selectItem itemLabel="Gastronomie" itemValue="food" />
+                    <f:selectItem itemLabel="Éducation" itemValue="education" />
+                    <f:selectItem itemLabel="Autre" itemValue="other" />
+                </h:selectOneMenu>
+                <div class="form-help">Si aucune catégorie n'est sélectionnée, "Social" sera utilisé par défaut</div>
+            </div>
+
+            <!-- Prix du billet -->
+            <div class="form-group price-container">
+                <h:outputLabel for="ticketPrice" value="Prix du billet (optionnel)" />
+                <h:inputText id="ticketPrice"
+                             value="#{ajouterEvenementBean.ticketPrice}"
+                             styleClass="form-control price-input"
+                             placeholder="0,00" />
+                <div class="form-help">Laissez vide pour un événement gratuit. Maximum 10 000€</div>
+            </div>
+
+            <!-- Description (optionnel) -->
+            <div class="form-group">
+                <h:outputLabel for="description" value="Description (optionnel)" />
+                <h:inputTextarea id="description"
+                                 value="#{ajouterEvenementBean.description}"
+                                 styleClass="form-control"
+                                 maxlength="5000"
+                                 rows="5"
+                                 onkeyup="updateCharCounter(this, 'desc-counter', 5000)" />
+                <div id="desc-counter" class="char-counter">5000 caractères restants</div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="button-group">
+                <h:commandButton value="Créer l'événement"
+                                 action="#{ajouterEvenementBean.ajouterEvenement}"
+                                 styleClass="btn-submit" />
+                <h:button value="Retour aux événements"
+                          outcome="/pages/events.xhtml"
+                          styleClass="btn-return" />
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>

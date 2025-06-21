@@ -18,7 +18,7 @@
 
     <!-- Page d'accueil par défaut -->
     <welcome-file-list>
-        <welcome-file>login.xhtml</welcome-file>
+        <welcome-file>pages/create-event.xhtml</welcome-file>
     </welcome-file-list>
 
     <!-- Configuration JSF (optionnel mais recommandé) -->
