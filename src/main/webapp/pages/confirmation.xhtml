@@ -1,24 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 <h:head>
-    <title>Réservation</title>
+    <title>Confirmation</title>
 </h:head>
-<h:body>
-    <h:form>
-        <h2>Réservation pour l'événement : #{eventDisplayBean.selectedEvent.title}</h2>
-
-        <h:panelGrid columns="2" cellpadding="5">
-            <h:outputLabel value="CIN:" for="cin" />
-            <h:inputText id="cin" value="#{eventReservationBean.participantId}" required="true" />
-
-            <h:outputLabel value="Email:" for="email" />
-            <h:inputText id="email" value="#{eventReservationBean.participantEmail}" required="true" />
-
-            <h:commandButton value="Confirmer réservation"
-                             action="#{eventReservationBean.submitReservation(eventDisplayBean.selectedEvent)}" />
-        </h:panelGrid>
-    </h:form>
+<h:body style="background-color:black; color:white; text-align:center; padding-top:100px;">
+    <h1 style="color:#C1272D;">Réservation Confirmée</h1>
+    <h3>Merci pour votre participation !</h3>
+    <h:link value="Retour aux événements" outcome="evenements.xhtml" />
 </h:body>
 </html>
