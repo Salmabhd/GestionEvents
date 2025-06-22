@@ -32,6 +32,29 @@
             padding-bottom: 15px;
         }
 
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 0;
+        }
+
+        .back-button-section {
+            flex-shrink: 0;
+        }
+
+        .page-title-section {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .page-title-section h1 {
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+
         .filters-section {
             background: #ecf0f1;
             padding: 20px;
@@ -111,6 +134,13 @@
             color: white;
         }
 
+        .btn-back {
+            background-color: #34495e;
+            color: white;
+            font-size: 14px;
+            padding: 12px 24px;
+        }
+
         .btn:hover {
             opacity: 0.8;
             transform: translateY(-1px);
@@ -174,6 +204,11 @@
 
         .status-registered {
             background-color: #3498db;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #f39c12;
             color: white;
         }
 
@@ -383,7 +418,23 @@
 
 <h:body>
     <div class="main-container">
-        <h1>🎯 Gestion des Participants aux Événements</h1>
+        <!-- En-tête avec bouton retour -->
+        <div class="header-actions">
+            <div class="back-button-section">
+                <h:form>
+                    <h:commandButton value="← Retour au Tableau de Bord"
+                                     action="AdminDashboard?faces-redirect=true"
+                                     styleClass="btn btn-back"
+                                     title="Retourner au tableau de bord administrateur" />
+                </h:form>
+            </div>
+            <div class="page-title-section">
+                <h1>🎯 Gestion des Participants aux Événements</h1>
+            </div>
+            <div class="back-button-section">
+                <!-- Espace pour équilibrer le layout -->
+            </div>
+        </div>
 
         <h:form id="mainForm">
             <!-- Section des actions globales -->
@@ -394,7 +445,7 @@
                                      update="mainForm"
                                      styleClass="btn btn-secondary" />
 
-                    <h:commandButton value="📊 Total: #{eventListeParticipantBean.participations.size()}"
+                    <h:commandButton value="📊 Total: #{eventListeParticipantBean.displayedParticipantsCount}"
                                      styleClass="btn btn-primary"
                                      disabled="true" />
                 </div>
@@ -423,6 +474,7 @@
                         <h:selectOneMenu id="statusSelect" value="#{eventListeParticipantBean.filterStatus}">
                             <f:selectItem itemLabel="-- Tous --" itemValue="#{null}" />
                             <f:selectItem itemLabel="Inscrit" itemValue="registered" />
+                            <f:selectItem itemLabel="En attente" itemValue="pending" />
                             <f:selectItem itemLabel="Confirmé" itemValue="confirmed" />
                             <f:selectItem itemLabel="Annulé" itemValue="cancelled" />
                         </h:selectOneMenu>
@@ -449,13 +501,13 @@
                     <p>
                         <strong>Attention:</strong> Cette action supprimera TOUS les participants de la base de données.
                         <br/>
-                        Actuellement: <strong>#{eventListeParticipantBean.participations.size()}</strong> participant(s) dans la liste affichée.
+                        Actuellement: <strong>#{eventListeParticipantBean.displayedParticipantsCount}</strong> participant(s) dans la liste affichée.
                     </p>
                     <h:commandButton value="🗑️ SUPPRIMER TOUS LES PARTICIPANTS"
                                      action="#{eventListeParticipantBean.deleteAllParticipants()}"
                                      update="mainForm"
                                      styleClass="btn btn-danger btn-large"
-                                     onclick="return confirm('⚠️ ATTENTION! SUPPRESSION DÉFINITIVE! ⚠️\\n\\nÊtes-vous absolument sûr(e) de vouloir supprimer TOUS les participants ?\\n\\nCette action est IRRÉVERSIBLE et supprimera #{eventListeParticipantBean.participations.size()} participant(s).\\n\\nTapez CONFIRMER dans la prochaine boîte de dialogue pour continuer.') &amp;&amp; prompt('Pour confirmer, tapez exactement: SUPPRIMER') === 'SUPPRIMER';"
+                                     onclick="return confirm('⚠️ ATTENTION! SUPPRESSION DÉFINITIVE! ⚠️\\n\\nÊtes-vous absolument sûr(e) de vouloir supprimer TOUS les participants ?\\n\\nCette action est IRRÉVERSIBLE et supprimera #{eventListeParticipantBean.displayedParticipantsCount} participant(s).\\n\\nTapez CONFIRMER dans la prochaine boîte de dialogue pour continuer.') &amp;&amp; prompt('Pour confirmer, tapez exactement: SUPPRIMER') === 'SUPPRIMER';"
                                      title="Supprimer définitivement tous les participants" />
                 </div>
             </h:panelGroup>
@@ -470,7 +522,7 @@
                 <h3>📊 Statistiques</h3>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <span class="stat-number">#{eventListeParticipantBean.participations.size()}</span>
+                        <span class="stat-number">#{eventListeParticipantBean.displayedParticipantsCount}</span>
                         <span class="stat-label">Participants Affichés</span>
                     </div>
                     <div class="stat-item">
@@ -508,7 +560,17 @@
 
                                 <div class="detail-row">
                                     <span class="detail-label">🎪 ID Événement:</span>
-                                    <span class="detail-value">#{participant.eventId}</span>
+                                    <span class="detail-value">#{eventListeParticipantBean.getParticipantEventId(participant)}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">🎪 Nom de l'événement:</span>
+                                    <span class="detail-value">#{eventListeParticipantBean.getParticipantEventName(participant)}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">👤 ID Participant:</span>
+                                    <span class="detail-value">#{participant.participantId}</span>
                                 </div>
 
                                 <div class="detail-row">
@@ -519,6 +581,16 @@
                                 <div class="detail-row">
                                     <span class="detail-label">📋 Statut:</span>
                                     <span class="detail-value">#{participant.status}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📅 Date d'inscription:</span>
+                                    <span class="detail-value">#{eventListeParticipantBean.getFormattedRegistrationDate(participant)}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📅 Date de création:</span>
+                                    <span class="detail-value">#{participant.createdAt}</span>
                                 </div>
                             </div>
 
@@ -538,7 +610,7 @@
 
                                 <h:commandButton value="📋 Détails"
                                                  styleClass="btn btn-secondary btn-small"
-                                                 onclick="alert('Détails du participant:\\nID: #{participant.id}\\nEmail: #{participant.participantEmail}\\nStatut: #{participant.status}\\nÉvénement ID: #{participant.eventId}'); return false;"
+                                                 onclick="alert('Détails du participant:\\nID: #{participant.id}\\nEmail: #{participant.participantEmail}\\nStatut: #{participant.status}\\nÉvénement ID: #{eventListeParticipantBean.getParticipantEventId(participant)}\\nNom événement: #{eventListeParticipantBean.getParticipantEventName(participant)}'); return false;"
                                                  title="Voir les détails complets" />
                             </div>
                         </div>

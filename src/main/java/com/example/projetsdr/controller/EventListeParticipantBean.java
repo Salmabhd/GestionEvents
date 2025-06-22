@@ -4,12 +4,11 @@ import com.example.projetsdr.model.EventParticipation;
 import com.example.projetsdr.repository.EventListeParticipantRepository;
 import com.example.projetsdr.service.EventListeParticipationService;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,10 +16,11 @@ import java.util.List;
 @SessionScoped
 public class EventListeParticipantBean implements Serializable {
 
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    @Resource(lookup = "java:/MySqldms_db")
-    private DataSource dataSource;
+    @Inject
+    private EventListeParticipantRepository repository;
 
     private EventListeParticipationService eventParticipationService;
     private List<EventParticipation> participations;
@@ -32,7 +32,6 @@ public class EventListeParticipantBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        EventListeParticipantRepository repository = new EventListeParticipantRepository(dataSource);
         eventParticipationService = new EventListeParticipationService(repository);
         loadParticipations();
     }
@@ -40,7 +39,8 @@ public class EventListeParticipantBean implements Serializable {
     public void loadParticipations() {
         try {
             participations = eventParticipationService.getAllParticipations();
-            addMessage("Participants chargés avec succès", FacesMessage.SEVERITY_INFO);
+            addMessage("Participants chargés avec succès (" + participations.size() + " trouvé(s))",
+                    FacesMessage.SEVERITY_INFO);
         } catch (Exception e) {
             addMessage("Erreur lors du chargement: " + e.getMessage(),
                     FacesMessage.SEVERITY_ERROR);
@@ -79,14 +79,22 @@ public class EventListeParticipantBean implements Serializable {
                 return;
             }
 
+            // Vérifier si le participant existe avant suppression
+            if (!eventParticipationService.participantExists(participantId)) {
+                addMessage("Participant introuvable avec l'ID: " + participantId,
+                        FacesMessage.SEVERITY_WARN);
+                return;
+            }
+
             boolean deleted = eventParticipationService.deleteParticipant(participantId);
 
             if (deleted) {
-                addMessage("Participant supprimé avec succès", FacesMessage.SEVERITY_INFO);
+                addMessage("Participant supprimé avec succès (ID: " + participantId + ")",
+                        FacesMessage.SEVERITY_INFO);
                 // Recharger la liste après suppression
                 loadParticipations();
             } else {
-                addMessage("Participant introuvable ou déjà supprimé", FacesMessage.SEVERITY_WARN);
+                addMessage("Échec de la suppression du participant", FacesMessage.SEVERITY_WARN);
             }
         } catch (Exception e) {
             addMessage("Erreur lors de la suppression: " + e.getMessage(),
@@ -99,15 +107,17 @@ public class EventListeParticipantBean implements Serializable {
      */
     public void deleteAllParticipants() {
         try {
-            if (!hasParticipants()) {
-                addMessage("Aucun participant à supprimer", FacesMessage.SEVERITY_WARN);
+            if (!hasParticipantsInList()) {
+                addMessage("Aucun participant à supprimer dans la liste affichée",
+                        FacesMessage.SEVERITY_WARN);
                 return;
             }
 
+            long totalBeforeDelete = getTotalParticipantsCount();
             int deletedCount = eventParticipationService.deleteAllParticipants();
 
             if (deletedCount > 0) {
-                addMessage("Tous les participants ont été supprimés (" + deletedCount + " suppression(s))",
+                addMessage("Suppression terminée: " + deletedCount + " participant(s) supprimé(s) de la base de données",
                         FacesMessage.SEVERITY_INFO);
                 // Recharger la liste vide
                 loadParticipations();
@@ -121,17 +131,63 @@ public class EventListeParticipantBean implements Serializable {
     }
 
     /**
-     * Vérifie s'il y a des participants
+     * Vérifie s'il y a des participants dans la liste affichée
      */
-    public boolean hasParticipants() {
+    public boolean hasParticipantsInList() {
         return participations != null && !participations.isEmpty();
     }
 
     /**
-     * Obtient le nombre total de participants
+     * Vérifie s'il y a des participants en base de données
+     */
+    public boolean hasParticipants() {
+        return eventParticipationService.hasParticipants();
+    }
+
+    /**
+     * Obtient le nombre total de participants en base
      */
     public long getTotalParticipantsCount() {
         return eventParticipationService.getTotalParticipantsCount();
+    }
+
+    /**
+     * Obtient le nombre de participants dans la liste affichée
+     */
+    public int getDisplayedParticipantsCount() {
+        return participations != null ? participations.size() : 0;
+    }
+
+    /**
+     * Méthode pour obtenir l'ID de l'événement d'un participant
+     * Compatible avec la nouvelle entité
+     */
+    public Long getParticipantEventId(EventParticipation participation) {
+        if (participation != null && participation.getEvent() != null) {
+            return participation.getEvent().getId();
+        }
+        return null;
+    }
+
+    /**
+     * Méthode pour obtenir le nom de l'événement d'un participant
+     * FIXED: Utilise getTitle() au lieu de getName()
+     */
+    public String getParticipantEventName(EventParticipation participation) {
+        if (participation != null && participation.getEvent() != null) {
+            return participation.getEvent().getTitle(); // Changed from getName() to getTitle()
+        }
+        return "Événement inconnu";
+    }
+
+    /**
+     * Méthode pour formater la date d'inscription
+     */
+    public String getFormattedRegistrationDate(EventParticipation participation) {
+        if (participation != null && participation.getRegistrationDate() != null) {
+            return participation.getRegistrationDate().toString();
+        }
+        return "Date inconnue";
     }
 
     /**

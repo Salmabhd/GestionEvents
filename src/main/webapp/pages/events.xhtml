@@ -976,17 +976,17 @@
             </div>
 
             <div class="nav-menu">
-                <button class="nav-item active">
+                <button class="nav-item active" onclick="window.location.href='#{request.contextPath}/pages/AdminDashboard.xhtml'">
                     <i class="fas fa-chart-pie"></i>
                     Accueil
                 </button>
 
-                <button class="nav-item" onclick="window.location.href='events.xhtml'">
+                <button class="nav-item" onclick="window.location.href='#{request.contextPath}/pages/events.xhtml'">
                     <i class="fas fa-calendar-alt"></i>
                     Événements
                 </button>
 
-                <button class="nav-item">
+                <button class="nav-item" onclick="window.location.href='#{request.contextPath}/pages/event-participants.xhtml'">
                     <i class="fas fa-users"></i>
                     Participants
                 </button>

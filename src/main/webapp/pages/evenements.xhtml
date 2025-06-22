@@ -256,7 +256,7 @@
             <a href="accueil.xhtml">Accueil</a>
             <a href="evenements.xhtml">Événements</a>
             <a href="#">À propos</a>
-            <a href="login.xhtml">Connexion</a>
+            <a href="Participant-login.xhtml">Connexion</a>
         </nav>
         <div class="nav-tools">
             <input type="text" placeholder="Rechercher..." />
@@ -288,6 +288,7 @@
                         </p>
                         <h:commandButton value="Réserver"
                                          action="#{eventDisplayBean.reserver(e)}"
+                                         immediate="true"
                                          style="background-color:#C1272D; color:white; border:none; padding:10px 18px; border-radius:6px; font-weight:bold;" />
                     </div>
                 </div>
