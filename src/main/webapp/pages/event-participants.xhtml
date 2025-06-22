@@ -1,0 +1,572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Liste des Participants - Détails Complets</title>
+
+    <style type="text/css">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        .filters-section {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            color: #34495e;
+            min-width: 100px;
+        }
+
+        .filter-group input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .participant-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .participant-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        .participant-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-registered {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .status-confirmed {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .participant-details {
+            line-height: 1.6;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #34495e;
+            min-width: 140px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+        }
+
+        .email-value {
+            color: #3498db;
+            text-decoration: underline;
+        }
+
+        .stats-section {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .no-participants {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .message-info {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message-warn {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .actions-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .participant-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+        }
+
+        .participant-actions .btn {
+            margin: 2px;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .loading::after {
+            content: "...";
+            animation: loading 1s infinite;
+        }
+
+        @keyframes loading {
+            0% { content: "..."; }
+            33% { content: "."; }
+            66% { content: ".."; }
+            100% { content: "..."; }
+        }
+
+        /* Table alternative pour une vue plus compacte */
+        .table-view {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .participants-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .participants-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .participants-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .participants-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .view-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .view-toggle .btn {
+            margin: 0 5px;
+        }
+
+        .view-toggle .btn.active {
+            background-color: #2c3e50;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="main-container">
+        <h1>🎯 Gestion des Participants aux Événements</h1>
+
+        <h:form id="mainForm">
+            <!-- Section des actions globales -->
+            <div class="actions-section">
+                <h:commandButton value="🔄 Actualiser"
+                                 action="#{eventListeParticipantBean.loadParticipations()}"
+                                 update="mainForm"
+                                 styleClass="btn btn-secondary" />
+            </div>
+
+            <!-- Section des filtres -->
+            <div class="filters-section">
+                <h3>🔍 Filtres de recherche</h3>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <h:outputLabel value="ID Événement:" for="eventIdInput" />
+                        <h:inputText id="eventIdInput"
+                                     value="#{eventListeParticipantBean.eventId}"
+                                     placeholder="Ex: 1, 2, 3..." />
+                    </div>
+
+                    <div class="filter-group">
+                        <h:outputLabel value="Email:" for="emailInput" />
+                        <h:inputText id="emailInput"
+                                     value="#{eventListeParticipantBean.filterEmail}"
+                                     placeholder="nom@email.com" />
+                    </div>
+
+                    <div class="filter-group">
+                        <h:outputLabel value="Statut:" for="statusSelect" />
+                        <h:selectOneMenu id="statusSelect" value="#{eventListeParticipantBean.filterStatus}">
+                            <f:selectItem itemLabel="-- Tous --" itemValue="#{null}" />
+                            <f:selectItem itemLabel="Inscrit" itemValue="registered" />
+                            <f:selectItem itemLabel="Confirmé" itemValue="confirmed" />
+                            <f:selectItem itemLabel="Annulé" itemValue="cancelled" />
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+
+
+
+                <div class="filter-row">
+                    <h:commandButton value="🔍 Rechercher"
+                                     action="#{eventListeParticipantBean.filterParticipations()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-primary" />
+
+                    <h:commandButton value="🔄 Réinitialiser"
+                                     action="#{eventListeParticipantBean.resetFilters()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-secondary" />
+                </div>
+            </div>
+
+            <!-- Bascule de vue (simplifiée) -->
+            <div class="view-toggle">
+                <h:outputText value="Vue des participants" style="font-weight: bold; color: #2c3e50;" />
+            </div>
+
+            <!-- Section des statistiques -->
+            <div class="stats-section">
+                <h3>📊 Statistiques</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">#{eventListeParticipantBean.participations.size()}</span>
+                        <span class="stat-label">Total Participants</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages">
+                <h:messages globalOnly="true" showDetail="true"
+                            infoClass="message message-info"
+                            errorClass="message message-error"
+                            warnClass="message message-warn" />
+            </div>
+
+            <!-- Vue Cartes -->
+            <h:panelGroup rendered="#{not empty eventListeParticipantBean.participations}">
+                <div class="participants-grid">
+                    <ui:repeat value="#{eventListeParticipantBean.participations}" var="participant">
+                        <div class="participant-card">
+                            <div class="participant-header">
+                                <div class="participant-id">👤 #{participant.participantId}</div>
+                                <div class="status-badge status-#{participant.status}">
+                                    #{participant.status}
+                                </div>
+                            </div>
+
+                            <div class="participant-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">🆔 ID Participation:</span>
+                                    <span class="detail-value">#{participant.id}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">🎪 ID Événement:</span>
+                                    <span class="detail-value">#{participant.eventId}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📧 Email:</span>
+                                    <span class="detail-value email-value">#{participant.participantEmail}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📅 Date inscription:</span>
+                                    <span class="detail-value">
+                                        <h:outputText value="#{participant.registrationDate}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy à HH:mm" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">🕒 Créé le:</span>
+                                    <span class="detail-value">
+                                        <h:outputText value="#{participant.createdAt}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy à HH:mm" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Actions sur le participant (simplifiées) -->
+                            <div class="participant-actions">
+                                <h:outputText value="Actions disponibles via service"
+                                              style="font-style: italic; color: #7f8c8d;" />
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </h:panelGroup>
+
+            <!-- Vue Tableau (cachée pour le moment) -->
+            <h:panelGroup rendered="false">
+                <div class="table-view">
+                    <h:dataTable value="#{eventListeParticipantBean.participations}"
+                                 var="participant"
+                                 styleClass="participants-table"
+                                 headerClass="table-header"
+                                 rowClasses="table-row-odd,table-row-even">
+
+                        <h:column>
+                            <f:facet name="header">ID</f:facet>
+                            #{participant.id}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Participant ID</f:facet>
+                            #{participant.participantId}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Event ID</f:facet>
+                            #{participant.eventId}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Email</f:facet>
+                            <span class="email-value">#{participant.participantEmail}</span>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Statut</f:facet>
+                            <span class="status-badge status-#{participant.status}">
+                                #{participant.status}
+                            </span>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Date Inscription</f:facet>
+                            <h:outputText value="#{participant.registrationDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Actions</f:facet>
+                            <h:commandButton value="✅"
+                                             title="Confirmer"
+                                             action="#{eventListeParticipantBean.confirmParticipant(participant.id)}"
+                                             update="mainForm"
+                                             styleClass="btn btn-success"
+                                             rendered="#{participant.status != 'confirmed'}" />
+
+                            <h:commandButton value="❌"
+                                             title="Annuler"
+                                             action="#{eventListeParticipantBean.cancelParticipant(participant.id)}"
+                                             update="mainForm"
+                                             styleClass="btn btn-danger"
+                                             rendered="#{participant.status != 'cancelled'}"
+                                             onclick="return confirm('Êtes-vous sûr ?');" />
+
+                            <h:commandButton value="📧"
+                                             title="Envoyer Email"
+                                             action="#{eventListeParticipantBean.sendEmailToParticipant(participant.id)}"
+                                             styleClass="btn btn-primary" />
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </h:panelGroup>
+
+            <!-- Message si aucun participant -->
+            <h:panelGroup rendered="#{empty eventListeParticipantBean.participations}">
+                <div class="no-participants">
+                    <h3>😔 Aucun participant trouvé</h3>
+                    <p>Aucun participant ne correspond aux critères de recherche.</p>
+                    <h:commandButton value="🔄 Recharger les données"
+                                     action="#{eventListeParticipantBean.loadParticipations()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-primary" />
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </div>
+</h:body>
+</html>
