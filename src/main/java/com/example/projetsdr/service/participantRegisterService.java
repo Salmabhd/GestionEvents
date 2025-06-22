@@ -2,7 +2,7 @@ package com.example.projetsdr.service;
 
 import com.example.projetsdr.model.Participant;
 import com.example.projetsdr.repository.ParticipantRegisterRepository;
-
+// Register participant
 public class participantRegisterService {
     private final ParticipantRegisterRepository participantRepo;
 

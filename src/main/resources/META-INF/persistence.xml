@@ -4,14 +4,13 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
     <persistence-unit name="default" transaction-type="JTA">
-        <jta-data-source>java:/MySqldms_db</jta-data-source>
+        <jta-data-source>java:/MySqlDS</jta-data-source>
         <properties>
             <property name="jakarta.persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.jta.datastore" value="true"/>
         </properties>
-
 
     </persistence-unit>
 </persistence>

@@ -34,6 +34,7 @@ public class EventReservationBean implements Serializable {
         }
     }
 
+    //Fonction pour enrigister la reservation
     public String enregistrerReservation() {
         if (participationService.register(participation)) {
             return "confirmation.xhtml?faces-redirect=true";

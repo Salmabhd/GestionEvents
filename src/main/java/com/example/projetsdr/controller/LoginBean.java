@@ -1,6 +1,5 @@
 package com.example.projetsdr.controller;
 
-
 import com.example.projetsdr.model.Admin;
 import com.example.projetsdr.repository.AdminRepository;
 import com.example.projetsdr.service.AdminService;
@@ -22,7 +21,7 @@ public class LoginBean implements Serializable {
     private String password;
     private boolean loggedIn;
 
-    @Resource(lookup = "java:/MySqldms_db")
+    @Resource(lookup = "java:/MySqlDS")
     private DataSource dataSource;
 
     public String login() {
@@ -50,11 +49,21 @@ public class LoginBean implements Serializable {
         return "login?faces-redirect=true";
     }
 
+    public String goToRegister() {
+        return "/register?faces-redirect=true"; // Assure-toi que register.xhtml existe
+    }
+
+    public String testConnection() {
+        System.out.println("Connexion testée avec succès");
+        addMessage("Connexion testée avec succès", FacesMessage.SEVERITY_INFO);
+        return null; // ou return "accueil"; pour rediriger
+    }
+
     private void addMessage(String msg, FacesMessage.Severity type) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(type, msg, null));
     }
 
-    // Getters / Setters
+    // Getters et Setters
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }

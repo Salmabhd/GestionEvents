@@ -33,7 +33,7 @@ public class ParticipantRegisterRepository {
         }
         return null;
     }
-
+//fonction de sauvegarde de reservation
     public boolean save(Participant participant) {
         try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO participants (nom, email, mot_de_passe) VALUES (?, ?, ?)";
