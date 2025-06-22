@@ -4,6 +4,7 @@ import com.example.projetsdr.model.EventParticipation;
 import com.example.projetsdr.repository.EventListeParticipantRepository;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class EventListeParticipationService {
 
@@ -30,6 +31,19 @@ public class EventListeParticipationService {
         }
     }
 
+    // Method that matches what your controller is calling
+    public boolean deleteParticipant(Long participantId) {
+        if (participantId == null) {
+            throw new IllegalArgumentException("ID du participant invalide: null");
+        }
+        try {
+            return repository.deleteById(participantId.longValue());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Keep the original method for backward compatibility
     public boolean deleteParticipation(long id) {
         try {
             return repository.deleteById(id);
@@ -40,5 +54,33 @@ public class EventListeParticipationService {
 
     public List<String> getAvailableStatuses() {
         return Arrays.asList("pending", "confirmed", "cancelled");
+    }
+
+    /**
+     * Méthode pour vérifier si un participant existe avant suppression
+     */
+    public boolean participantExists(Long participantId) {
+        if (participantId == null || participantId.longValue() <= 0) {
+            return false;
+        }
+
+        try {
+            List<EventParticipation> participations = repository.findAll();
+            return participations.stream()
+                    .anyMatch(p -> p != null && Objects.equals(p.getId(), participantId.longValue()));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Suppression sécurisée avec vérification d'existence
+     */
+    public boolean safeDeleteParticipant(Long participantId) {
+        if (!participantExists(participantId)) {
+            throw new IllegalArgumentException("Participant introuvable avec l'ID: " + participantId);
+        }
+
+        return deleteParticipant(participantId);
     }
 }

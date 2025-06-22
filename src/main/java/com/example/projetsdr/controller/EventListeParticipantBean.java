@@ -69,6 +69,41 @@ public class EventListeParticipantBean implements Serializable {
         addMessage("Filtres réinitialisés", FacesMessage.SEVERITY_INFO);
     }
 
+    /**
+     * Nouvelle méthode pour supprimer un participant
+     */
+    public String deleteParticipant(Long participantId) {
+        try {
+            if (participantId == null) {
+                addMessage("ID du participant invalide", FacesMessage.SEVERITY_ERROR);
+                return "error";
+            }
+
+            boolean deleted = eventParticipationService.deleteParticipant(participantId);
+
+            if (deleted) {
+                addMessage("Participant supprimé avec succès", FacesMessage.SEVERITY_INFO);
+                // Recharger la liste après suppression
+                loadParticipations();
+                return "success";
+            } else {
+                addMessage("Participant introuvable ou déjà supprimé", FacesMessage.SEVERITY_WARN);
+                return "warning";
+            }
+        } catch (Exception e) {
+            addMessage("Erreur lors de la suppression: " + e.getMessage(),
+                    FacesMessage.SEVERITY_ERROR);
+            return "error";
+        }
+    }
+
+    /**
+     * Méthode alternative pour supprimer via void (pour AJAX)
+     */
+    public void deleteParticipantAjax(Long participantId) {
+        deleteParticipant(participantId);
+    }
+
     // Méthode utilitaire
     private void addMessage(String summary, FacesMessage.Severity severity) {
         FacesMessage message = new FacesMessage(severity, summary, null);

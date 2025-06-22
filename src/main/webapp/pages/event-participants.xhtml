@@ -106,9 +106,20 @@
             color: white;
         }
 
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
         .btn:hover {
             opacity: 0.8;
             transform: translateY(-1px);
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin: 2px;
         }
 
         .participants-grid {
@@ -301,6 +312,16 @@
             100% { content: "..."; }
         }
 
+        /* Confirmation dialog styles */
+        .delete-confirmation {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            color: #856404;
+        }
+
         /* Table alternative pour une vue plus compacte */
         .table-view {
             overflow-x: auto;
@@ -390,8 +411,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="filter-row">
                     <h:commandButton value="🔍 Rechercher"
                                      action="#{eventListeParticipantBean.filterParticipations()}"
@@ -476,17 +495,31 @@
                                 </div>
                             </div>
 
-                            <!-- Actions sur le participant (simplifiées) -->
+                            <!-- Actions sur le participant -->
                             <div class="participant-actions">
-                                <h:outputText value="Actions disponibles via service"
-                                              style="font-style: italic; color: #7f8c8d;" />
+                                <h:commandButton value="🗑️ Supprimer"
+                                                 action="#{eventListeParticipantBean.deleteParticipant(participant.id)}"
+                                                 update="mainForm"
+                                                 styleClass="btn btn-danger btn-small"
+                                                 onclick="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer ce participant ?\\n\\nParticipant: #{participant.participantEmail}\\nID: #{participant.id}\\n\\nCette action est irréversible.');"
+                                                 title="Supprimer définitivement ce participant" />
+
+                                <h:commandButton value="📧 Contact"
+                                                 styleClass="btn btn-primary btn-small"
+                                                 onclick="window.location.href='mailto:#{participant.participantEmail}'; return false;"
+                                                 title="Envoyer un email à ce participant" />
+
+                                <h:commandButton value="📋 Détails"
+                                                 styleClass="btn btn-secondary btn-small"
+                                                 onclick="alert('Détails du participant:\\nID: #{participant.id}\\nEmail: #{participant.participantEmail}\\nStatut: #{participant.status}'); return false;"
+                                                 title="Voir les détails complets" />
                             </div>
                         </div>
                     </ui:repeat>
                 </div>
             </h:panelGroup>
 
-            <!-- Vue Tableau (cachée pour le moment) -->
+            <!-- Vue Tableau (avec suppression aussi) -->
             <h:panelGroup rendered="false">
                 <div class="table-view">
                     <h:dataTable value="#{eventListeParticipantBean.participations}"
@@ -531,25 +564,18 @@
 
                         <h:column>
                             <f:facet name="header">Actions</f:facet>
-                            <h:commandButton value="✅"
-                                             title="Confirmer"
-                                             action="#{eventListeParticipantBean.confirmParticipant(participant.id)}"
-                                             update="mainForm"
-                                             styleClass="btn btn-success"
-                                             rendered="#{participant.status != 'confirmed'}" />
 
-                            <h:commandButton value="❌"
-                                             title="Annuler"
-                                             action="#{eventListeParticipantBean.cancelParticipant(participant.id)}"
+                            <h:commandButton value="🗑️"
+                                             title="Supprimer"
+                                             action="#{eventListeParticipantBean.deleteParticipant(participant.id)}"
                                              update="mainForm"
-                                             styleClass="btn btn-danger"
-                                             rendered="#{participant.status != 'cancelled'}"
-                                             onclick="return confirm('Êtes-vous sûr ?');" />
+                                             styleClass="btn btn-danger btn-small"
+                                             onclick="return confirm('Supprimer #{participant.participantEmail} ?');" />
 
                             <h:commandButton value="📧"
                                              title="Envoyer Email"
-                                             action="#{eventListeParticipantBean.sendEmailToParticipant(participant.id)}"
-                                             styleClass="btn btn-primary" />
+                                             styleClass="btn btn-primary btn-small"
+                                             onclick="window.location.href='mailto:#{participant.participantEmail}'; return false;" />
                         </h:column>
                     </h:dataTable>
                 </div>
