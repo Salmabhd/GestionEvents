@@ -52,6 +52,36 @@ public class EventListeParticipationService {
         }
     }
 
+    /**
+     * Nouvelle méthode pour supprimer tous les participants
+     */
+    public int deleteAllParticipants() {
+        try {
+            int deletedCount = repository.deleteAll();
+            return deletedCount;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la suppression de tous les participants: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Méthode pour obtenir le nombre total de participants
+     */
+    public long getTotalParticipantsCount() {
+        try {
+            return repository.countAll();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Méthode pour vérifier s'il y a des participants à supprimer
+     */
+    public boolean hasParticipants() {
+        return getTotalParticipantsCount() > 0;
+    }
+
     public List<String> getAvailableStatuses() {
         return Arrays.asList("pending", "confirmed", "cancelled");
     }

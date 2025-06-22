@@ -104,4 +104,38 @@ public class EventListeParticipantRepository {
             throw new RuntimeException("Erreur de suppression", e);
         }
     }
+
+    /**
+     * Nouvelle méthode pour supprimer tous les participants
+     */
+    public int deleteAll() {
+        String sql = "DELETE FROM event_participations";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la suppression de tous les participants", e);
+        }
+    }
+
+    /**
+     * Méthode pour compter le nombre total de participants
+     */
+    public long countAll() {
+        String sql = "SELECT COUNT(*) FROM event_participations";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors du comptage des participants", e);
+        }
+    }
 }

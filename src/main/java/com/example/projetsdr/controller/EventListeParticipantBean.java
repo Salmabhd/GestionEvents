@@ -95,16 +95,54 @@ public class EventListeParticipantBean implements Serializable {
     }
 
     /**
-     * Méthode alternative pour supprimer via void (pour AJAX)
+     * Méthode pour supprimer tous les participants
      */
-    public void deleteParticipantAjax(Long participantId) {
-        deleteParticipant(participantId);
+    public void deleteAllParticipants() {
+        try {
+            if (!hasParticipants()) {
+                addMessage("Aucun participant à supprimer", FacesMessage.SEVERITY_WARN);
+                return;
+            }
+
+            int deletedCount = eventParticipationService.deleteAllParticipants();
+
+            if (deletedCount > 0) {
+                addMessage("Tous les participants ont été supprimés (" + deletedCount + " suppression(s))",
+                        FacesMessage.SEVERITY_INFO);
+                // Recharger la liste vide
+                loadParticipations();
+            } else {
+                addMessage("Aucun participant n'a été supprimé", FacesMessage.SEVERITY_WARN);
+            }
+        } catch (Exception e) {
+            addMessage("Erreur lors de la suppression de tous les participants: " + e.getMessage(),
+                    FacesMessage.SEVERITY_ERROR);
+        }
     }
 
-    // Méthode utilitaire
-    private void addMessage(String summary, FacesMessage.Severity severity) {
-        FacesMessage message = new FacesMessage(severity, summary, null);
-        FacesContext.getCurrentInstance().addMessage(null, message);
+    /**
+     * Vérifie s'il y a des participants
+     */
+    public boolean hasParticipants() {
+        return participations != null && !participations.isEmpty();
+    }
+
+    /**
+     * Obtient le nombre total de participants
+     */
+    public long getTotalParticipantsCount() {
+        return eventParticipationService.getTotalParticipantsCount();
+    }
+
+    /**
+     * Méthode utilitaire pour ajouter des messages
+     */
+    private void addMessage(String message, FacesMessage.Severity severity) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context != null) {
+            FacesMessage facesMessage = new FacesMessage(severity, message, null);
+            context.addMessage(null, facesMessage);
+        }
     }
 
     // Getters et Setters
@@ -138,5 +176,13 @@ public class EventListeParticipantBean implements Serializable {
 
     public void setFilterStatus(String filterStatus) {
         this.filterStatus = filterStatus;
+    }
+
+    public EventListeParticipationService getEventParticipationService() {
+        return eventParticipationService;
+    }
+
+    public void setEventParticipationService(EventListeParticipationService eventParticipationService) {
+        this.eventParticipationService = eventParticipationService;
     }
 }
