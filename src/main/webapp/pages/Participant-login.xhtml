@@ -20,6 +20,30 @@
          justify-content: center;
       }
 
+      .divider {
+         text-align: center;
+         margin: 20px 0;
+         position: relative;
+      }
+
+      .divider span {
+         background: #fff;
+         padding: 0 10px;
+         position: relative;
+         z-index: 1;
+      }
+
+      .divider::before {
+         content: "";
+         position: absolute;
+         width: 100%;
+         height: 1px;
+         background: #ccc;
+         top: 50%;
+         left: 0;
+         z-index: 0;
+      }
+
       .login-container {
          background: white;
          padding: 40px;
@@ -47,6 +71,20 @@
          margin-bottom: 8px;
          color: #555;
          font-weight: 500;
+      }
+      .signup-link {
+         text-align: center;
+         margin-top: 15px;
+      }
+
+      .signup-link a {
+         text-decoration: none;
+         color: #2575fc;
+         font-weight: 500;
+      }
+
+      .signup-link a:hover {
+         text-decoration: underline;
       }
 
       .form-control {
@@ -77,6 +115,20 @@
          transition: transform 0.2s;
          margin-top: 20px;
       }
+      .btn-register {
+         width: 50%;
+         padding: 12px;
+         background: linear-gradient(100deg, #273160 0%, #aa87dc 100%);
+         color: white;
+         border: none;
+         border-radius: 8px;
+         font-size: 12px;
+         font-weight: 300;
+         cursor: pointer;
+         transition: transform 0.2s;
+         margin-top: 20px;
+      }
+
 
       .btn-login:hover {
          transform: translateY(-2px);
@@ -160,13 +212,13 @@
                           action="#{participantLoginBean.login}"
                           styleClass="btn-login" />
 
-         <div class="register-section">
-            <div class="register-text">Vous n'avez pas encore de compte ?</div>
-            <h:link outcome="register" value="S'inscrire" styleClass="register-link" />
-         </div>
 
-         <div class="admin-link">
-            <h:link outcome="admin-login" value="Connexion Administrateur" />
+         <div class="divider"><span>ou</span></div>
+
+         <h:commandButton value="Créer un compte" action="#{loginBean.goToRegister}" styleClass="btn-register"/>
+
+         <div class="signup-link">
+            Vous n'avez pas de compte ? <a href="participant-register.xhtml">S'inscrire</a>
          </div>
       </h:form>
    </div>
