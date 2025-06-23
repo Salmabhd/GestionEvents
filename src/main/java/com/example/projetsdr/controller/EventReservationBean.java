@@ -31,6 +31,10 @@ public class EventReservationBean implements Serializable {
             FacesContext.getCurrentInstance().getExternalContext().redirect("reservation.xhtml");
         } catch (IOException e) {
             e.printStackTrace();
+
+
+  
+ 
         }
     }
 
@@ -45,6 +49,9 @@ public class EventReservationBean implements Serializable {
         }
     }
 
+
+
     public EventParticipation getParticipation() { return participation; }
     public EventEntity getSelectedEvent() { return selectedEvent; }
 }
+

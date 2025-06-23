@@ -1,0 +1,653 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Liste des Participants - Détails Complets</title>
+
+    <style type="text/css">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 0;
+        }
+
+        .back-button-section {
+            flex-shrink: 0;
+        }
+
+        .page-title-section {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .page-title-section h1 {
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+
+        .filters-section {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            color: #34495e;
+            min-width: 100px;
+        }
+
+        .filter-group input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #34495e;
+            color: white;
+            font-size: 14px;
+            padding: 12px 24px;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .participant-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .participant-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        .participant-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-registered {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status-confirmed {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .participant-details {
+            line-height: 1.6;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #34495e;
+            min-width: 140px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+        }
+
+        .email-value {
+            color: #3498db;
+            text-decoration: underline;
+        }
+
+        .stats-section {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .no-participants {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .message-info {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message-warn {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .actions-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .actions-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .danger-zone {
+            background: #fdf2f2;
+            border: 2px solid #e74c3c;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .danger-zone h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .danger-zone p {
+            color: #721c24;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .participant-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+        }
+
+        .participant-actions .btn {
+            margin: 2px;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .loading::after {
+            content: "...";
+            animation: loading 1s infinite;
+        }
+
+        @keyframes loading {
+            0% { content: "..."; }
+            33% { content: "."; }
+            66% { content: ".."; }
+            100% { content: "..."; }
+        }
+
+        .view-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .view-toggle .btn {
+            margin: 0 5px;
+        }
+
+        .view-toggle .btn.active {
+            background-color: #2c3e50;
+        }
+
+        .delete-all-section {
+            background: #ffeaa7;
+            border: 2px solid #f39c12;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .delete-all-section h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .delete-all-section p {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="main-container">
+        <!-- En-tête avec bouton retour -->
+        <div class="header-actions">
+            <div class="back-button-section">
+                <h:form>
+                    <h:commandButton value="← Retour au Tableau de Bord"
+                                     action="AdminDashboard?faces-redirect=true"
+                                     styleClass="btn btn-back"
+                                     title="Retourner au tableau de bord administrateur" />
+                </h:form>
+            </div>
+            <div class="page-title-section">
+                <h1>🎯 Gestion des Participants aux Événements</h1>
+            </div>
+            <div class="back-button-section">
+                <!-- Espace pour équilibrer le layout -->
+            </div>
+        </div>
+
+        <h:form id="mainForm">
+            <!-- Section des actions globales -->
+            <div class="actions-section">
+                <div class="actions-row">
+                    <h:commandButton value="🔄 Actualiser"
+                                     action="#{eventListeParticipantBean.loadParticipations()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-secondary" />
+
+                    <h:commandButton value="📊 Total: #{eventListeParticipantBean.displayedParticipantsCount}"
+                                     styleClass="btn btn-primary"
+                                     disabled="true" />
+                </div>
+            </div>
+
+            <!-- Section des filtres -->
+            <div class="filters-section">
+                <h3>🔍 Filtres de recherche</h3>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <h:outputLabel value="ID Événement:" for="eventIdInput" />
+                        <h:inputText id="eventIdInput"
+                                     value="#{eventListeParticipantBean.eventId}"
+                                     placeholder="Ex: 1, 2, 3..." />
+                    </div>
+
+                    <div class="filter-group">
+                        <h:outputLabel value="Email:" for="emailInput" />
+                        <h:inputText id="emailInput"
+                                     value="#{eventListeParticipantBean.filterEmail}"
+                                     placeholder="nom@email.com" />
+                    </div>
+
+                    <div class="filter-group">
+                        <h:outputLabel value="Statut:" for="statusSelect" />
+                        <h:selectOneMenu id="statusSelect" value="#{eventListeParticipantBean.filterStatus}">
+                            <f:selectItem itemLabel="-- Tous --" itemValue="#{null}" />
+                            <f:selectItem itemLabel="Inscrit" itemValue="registered" />
+                            <f:selectItem itemLabel="En attente" itemValue="pending" />
+                            <f:selectItem itemLabel="Confirmé" itemValue="confirmed" />
+                            <f:selectItem itemLabel="Annulé" itemValue="cancelled" />
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <h:commandButton value="🔍 Rechercher"
+                                     action="#{eventListeParticipantBean.filterParticipations()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-primary" />
+
+                    <h:commandButton value="🔄 Réinitialiser"
+                                     action="#{eventListeParticipantBean.resetFilters()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-secondary" />
+                </div>
+            </div>
+
+            <!-- Section de suppression globale -->
+            <h:panelGroup rendered="#{eventListeParticipantBean.hasParticipants()}">
+                <div class="delete-all-section">
+                    <h4>⚠️ Zone de Suppression Globale</h4>
+                    <p>
+                        <strong>Attention:</strong> Cette action supprimera TOUS les participants de la base de données.
+                        <br/>
+                        Actuellement: <strong>#{eventListeParticipantBean.displayedParticipantsCount}</strong> participant(s) dans la liste affichée.
+                    </p>
+                    <h:commandButton value="🗑️ SUPPRIMER TOUS LES PARTICIPANTS"
+                                     action="#{eventListeParticipantBean.deleteAllParticipants()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-danger btn-large"
+                                     onclick="return confirm('⚠️ ATTENTION! SUPPRESSION DÉFINITIVE! ⚠️\\n\\nÊtes-vous absolument sûr(e) de vouloir supprimer TOUS les participants ?\\n\\nCette action est IRRÉVERSIBLE et supprimera #{eventListeParticipantBean.displayedParticipantsCount} participant(s).\\n\\nTapez CONFIRMER dans la prochaine boîte de dialogue pour continuer.') &amp;&amp; prompt('Pour confirmer, tapez exactement: SUPPRIMER') === 'SUPPRIMER';"
+                                     title="Supprimer définitivement tous les participants" />
+                </div>
+            </h:panelGroup>
+
+            <!-- Bascule de vue (simplifiée) -->
+            <div class="view-toggle">
+                <h:outputText value="Vue des participants" style="font-weight: bold; color: #2c3e50;" />
+            </div>
+
+            <!-- Section des statistiques -->
+            <div class="stats-section">
+                <h3>📊 Statistiques</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">#{eventListeParticipantBean.displayedParticipantsCount}</span>
+                        <span class="stat-label">Participants Affichés</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">#{eventListeParticipantBean.totalParticipantsCount}</span>
+                        <span class="stat-label">Total en Base</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages">
+                <h:messages globalOnly="true" showDetail="true"
+                            infoClass="message message-info"
+                            errorClass="message message-error"
+                            warnClass="message message-warn" />
+            </div>
+
+            <!-- Vue Cartes -->
+            <h:panelGroup rendered="#{not empty eventListeParticipantBean.participations}">
+                <div class="participants-grid">
+                    <ui:repeat value="#{eventListeParticipantBean.participations}" var="participant">
+                        <div class="participant-card">
+                            <div class="participant-header">
+                                <div class="participant-id">👤 Participant ##{participant.id}</div>
+                                <div class="status-badge status-#{participant.status}">
+                                    #{participant.status}
+                                </div>
+                            </div>
+
+                            <div class="participant-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">🆔 ID Participation:</span>
+                                    <span class="detail-value">#{participant.id}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">🎪 ID Événement:</span>
+                                    <span class="detail-value">#{eventListeParticipantBean.getParticipantEventId(participant)}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">🎪 Nom de l'événement:</span>
+                                    <span class="detail-value">#{eventListeParticipantBean.getParticipantEventName(participant)}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">👤 ID Participant:</span>
+                                    <span class="detail-value">#{participant.participantId}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📧 Email:</span>
+                                    <span class="detail-value email-value">#{participant.participantEmail}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📋 Statut:</span>
+                                    <span class="detail-value">#{participant.status}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📅 Date d'inscription:</span>
+                                    <span class="detail-value">#{eventListeParticipantBean.getFormattedRegistrationDate(participant)}</span>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span class="detail-label">📅 Date de création:</span>
+                                    <span class="detail-value">#{participant.createdAt}</span>
+                                </div>
+                            </div>
+
+                            <!-- Actions sur le participant -->
+                            <div class="participant-actions">
+                                <h:commandButton value="🗑️ Supprimer"
+                                                 action="#{eventListeParticipantBean.deleteParticipant(participant.id)}"
+                                                 update="mainForm"
+                                                 styleClass="btn btn-danger btn-small"
+                                                 onclick="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer ce participant ?\\n\\nParticipant: #{participant.participantEmail}\\nID: #{participant.id}\\n\\nCette action est irréversible.');"
+                                                 title="Supprimer définitivement ce participant" />
+
+                                <h:commandButton value="📧 Contact"
+                                                 styleClass="btn btn-primary btn-small"
+                                                 onclick="window.location.href='mailto:#{participant.participantEmail}'; return false;"
+                                                 title="Envoyer un email à ce participant" />
+
+                                <h:commandButton value="📋 Détails"
+                                                 styleClass="btn btn-secondary btn-small"
+                                                 onclick="alert('Détails du participant:\\nID: #{participant.id}\\nEmail: #{participant.participantEmail}\\nStatut: #{participant.status}\\nÉvénement ID: #{eventListeParticipantBean.getParticipantEventId(participant)}\\nNom événement: #{eventListeParticipantBean.getParticipantEventName(participant)}'); return false;"
+                                                 title="Voir les détails complets" />
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </h:panelGroup>
+
+            <!-- Message si aucun participant -->
+            <h:panelGroup rendered="#{empty eventListeParticipantBean.participations}">
+                <div class="no-participants">
+                    <h3>😔 Aucun participant trouvé</h3>
+                    <p>Aucun participant ne correspond aux critères de recherche.</p>
+                    <h:commandButton value="🔄 Recharger les données"
+                                     action="#{eventListeParticipantBean.loadParticipations()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-primary" />
+                </div>
+            </h:panelGroup>
+
+            <!-- Zone dangereuse additionnelle (visible seulement si pas de participants) -->
+            <h:panelGroup rendered="#{empty eventListeParticipantBean.participations and eventListeParticipantBean.totalParticipantsCount > 0}">
+                <div class="danger-zone">
+                    <h3>🚨 Zone Dangereuse</h3>
+                    <p>
+                        Il semble y avoir des participants en base de données mais aucun n'est affiché.
+                        <br/>
+                        Total en base: <strong>#{eventListeParticipantBean.totalParticipantsCount}</strong>
+                    </p>
+                    <h:commandButton value="🗑️ Vider Complètement la Base"
+                                     action="#{eventListeParticipantBean.deleteAllParticipants()}"
+                                     update="mainForm"
+                                     styleClass="btn btn-danger btn-large"
+                                     onclick="return confirm('⚠️ SUPPRESSION TOTALE DE LA BASE ⚠️\\n\\nCeci supprimera #{eventListeParticipantBean.totalParticipantsCount} participant(s) de la base de données.\\n\\nÊtes-vous absolument sûr ?') &amp;&amp; prompt('Confirmez en tapant: VIDER') === 'VIDER';"
+                                     title="Supprimer tous les participants de la base de données" />
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </div>
+</h:body>
+</html>

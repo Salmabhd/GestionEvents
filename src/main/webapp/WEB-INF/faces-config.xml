@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+              https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
+              version="4.0">
+
+        <!-- Navigation depuis Participant-login -->
+        <navigation-rule>
+            <from-view-id>/pages/Participant-login.xhtml</from-view-id>
+
+            <navigation-case>
+                <from-outcome>register</from-outcome>
+                <to-view-id>/pages/participant-register.xhtml</to-view-id>
+                <redirect/>
+            </navigation-case>
+
+            <navigation-case>
+                <from-outcome>admin-login</from-outcome>
+                <to-view-id>login.xhtml</to-view-id>
+                <redirect/>
+            </navigation-case>
+
+        </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/pages/participant-register.xhtml</from-view-id>
+
+        <navigation-case>
+            <from-outcome>participant-login</from-outcome>
+            <to-view-id>/pages/Participant-login.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    </faces-config>
+

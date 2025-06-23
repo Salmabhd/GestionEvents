@@ -1,71 +1,88 @@
 package com.example.projetsdr.model;
+
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "event_participations", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"event_id", "participant_email"})
+})
 public class EventParticipation {
-    private long id;
-    private long eventId;
-    private int participantId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private EventEntity event;
+
+    @Column(name = "participant_id", nullable = false)
+    private String participantId;
+
+    @Column(name = "participant_email", nullable = false)
     private String participantEmail;
-    private LocalDateTime registrationDate;
-    private String status;
-    private LocalDateTime createdAt;
 
-    // Constructeur vide
-    public EventParticipation() {
-    }
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate = LocalDateTime.now();
 
-    // Getters
-    public long getId() {
+    @Column(name = "status")
+    private String status = "registered";
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Getters & setters
+    public Long getId() {
         return id;
     }
 
-    public long getEventId() {
-        return eventId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public int getParticipantId() {
+    public EventEntity getEvent() {
+        return event;
+    }
+
+    public void setEvent(EventEntity event) {
+        this.event = event;
+    }
+
+    public String getParticipantId() {
         return participantId;
+    }
+
+    public void setParticipantId(String participantId) {
+        this.participantId = participantId;
     }
 
     public String getParticipantEmail() {
         return participantEmail;
     }
 
-    public LocalDateTime getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    // Setters
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setEventId(long eventId) {
-        this.eventId = eventId;
-    }
-
-    public void setParticipantId(int participantId) {
-        this.participantId = participantId;
-    }
-
     public void setParticipantEmail(String participantEmail) {
         this.participantEmail = participantEmail;
+    }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
     }
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

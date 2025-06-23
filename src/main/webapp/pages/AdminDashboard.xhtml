@@ -566,17 +566,17 @@
         </div>
 
         <div class="nav-menu">
-            <button class="nav-item active" type="button" onclick="window.location.href='AdminDashboard.xhtml'">
+            <button class="nav-item active" type="button" onclick="window.location.href='#{request.contextPath}/pages/AdminDashboard.xhtml'">
                 <i class="fas fa-chart-pie"></i>
                 Accueil
             </button>
 
-            <button class="nav-item" type="button" onclick="window.location.href='pages/events.xhtml'">
+            <button class="nav-item" type="button" onclick="window.location.href='#{request.contextPath}/pages/events.xhtml'">
                 <i class="fas fa-calendar-alt"></i>
                 Événements
             </button>
 
-            <button class="nav-item" type="button">
+            <button class="nav-item" type="button" onclick="window.location.href='#{request.contextPath}/pages/event-participants.xhtml'">
                 <i class="fas fa-users"></i>
                 Participants
             </button>
@@ -618,7 +618,7 @@
                     <input type="text" class="search-input" placeholder="Rechercher des événements..." />
                     <i class="fas fa-search search-icon"></i>
                 </div>
-                <a href="pages/create-event.xhtml" class="btn-new-event">
+                <a href="#{request.contextPath}/pages/create-event.xhtml" class="btn-new-event">
                     <i class="fas fa-plus"></i>
                     Nouvel événement
                 </a>

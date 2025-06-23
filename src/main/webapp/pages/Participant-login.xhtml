@@ -153,6 +153,30 @@
       .admin-link a:hover {
          text-decoration: underline;
       }
+
+      .register-section {
+         margin-top: 15px;
+         padding-top: 15px;
+         text-align: center;
+      }
+
+      .register-text {
+         color: #666;
+         font-size: 14px;
+         margin-bottom: 8px;
+      }
+
+      .register-link {
+         color: #667eea !important;
+         text-decoration: none !important;
+         font-weight: 500;
+         font-size: 14px;
+      }
+
+      .register-link:hover {
+         text-decoration: underline !important;
+         color: #764ba2 !important;
+      }
    </style>
 </h:head>
 
@@ -187,6 +211,7 @@
          <h:commandButton value="Se connecter"
                           action="#{participantLoginBean.login}"
                           styleClass="btn-login" />
+
 
          <div class="divider"><span>ou</span></div>
 
