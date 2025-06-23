@@ -20,6 +20,11 @@ public class EventAddService {
     @Inject
     private EventAddRepository eventAddRepository;
 
+    // Cache simple pour éviter les requêtes répétées
+    private List<Event> cachedEvents;
+    private LocalDateTime lastCacheUpdate;
+    private static final long CACHE_DURATION_MINUTES = 1; // Cache de 1 minute
+
     public EventAddService() {
     }
 
@@ -27,12 +32,16 @@ public class EventAddService {
         this.eventAddRepository = eventAddRepository;
     }
 
-    public void saveEvent(Event event) {
+    public Event saveEvent(Event event) throws ServiceException {
         try {
             validateEventData(event);
-            eventAddRepository.save(event);
-        } catch (ServiceException e) {
+            Event savedEvent = eventAddRepository.save(event);
+            // Invalide le cache après ajout
+            invalidateCache();
+            return savedEvent;
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde", e);
+            throw new ServiceException("Erreur lors de la sauvegarde: " + e.getMessage(), e);
         }
     }
 
@@ -46,12 +55,32 @@ public class EventAddService {
             event.setUpdatedAt(LocalDateTime.now());
         }
 
-        eventAddRepository.save(event);
-        return event;
+        Event savedEvent = eventAddRepository.save(event);
+
+        // Invalide le cache pour forcer le rechargement
+        invalidateCache();
+
+        LOGGER.info("Événement créé avec succès : " + savedEvent.getTitle());
+        return savedEvent;
     }
 
     public List<Event> getAllEvents() {
-        return eventAddRepository.findAll();
+        // Utilise le cache si disponible et valide
+        if (isCacheValid()) {
+            LOGGER.info("Retour des événements depuis le cache");
+            return cachedEvents;
+        }
+
+        LOGGER.info("Rechargement des événements depuis la base de données");
+        cachedEvents = eventAddRepository.findAll();
+        lastCacheUpdate = LocalDateTime.now();
+        return cachedEvents;
+    }
+
+    // Méthode pour forcer le rechargement (utile pour les tests)
+    public List<Event> getAllEventsForceRefresh() {
+        invalidateCache();
+        return getAllEvents();
     }
 
     public Event getEventById(Long id) throws ServiceException {
@@ -66,7 +95,7 @@ public class EventAddService {
         return event;
     }
 
-    public void updateEvent(Event event) throws ServiceException {
+    public Event updateEvent(Event event) throws ServiceException {
         validateEventData(event);
 
         if (event.getId() == null) {
@@ -74,7 +103,12 @@ public class EventAddService {
         }
 
         event.setUpdatedAt(LocalDateTime.now());
-        eventAddRepository.update(event);
+        Event updatedEvent = eventAddRepository.update(event);
+
+        // Invalide le cache après modification
+        invalidateCache();
+
+        return updatedEvent;
     }
 
     public void deleteEvent(Long id) throws ServiceException {
@@ -83,6 +117,9 @@ public class EventAddService {
         }
 
         eventAddRepository.delete(id);
+
+        // Invalide le cache après suppression
+        invalidateCache();
     }
 
     public void reserveTickets(Long eventId, int quantity) throws ServiceException {
@@ -99,11 +136,14 @@ public class EventAddService {
 
         event.setTicketsSold(event.getTicketsSold() + quantity);
         eventAddRepository.update(event);
+
+        // Invalide le cache après réservation
+        invalidateCache();
     }
 
     public List<Event> getUpcomingEvents() {
         LocalDateTime now = LocalDateTime.now();
-        return eventAddRepository.findAll().stream()
+        return getAllEvents().stream()
                 .filter(event -> event.getEventDate() != null && event.getEventDate().isAfter(now))
                 .sorted((e1, e2) -> e1.getEventDate().compareTo(e2.getEventDate()))
                 .collect(Collectors.toList());
@@ -116,7 +156,7 @@ public class EventAddService {
 
         try {
             EventCategory cat = EventCategory.valueOf(category.toUpperCase());
-            return eventAddRepository.findAll().stream()
+            return getAllEvents().stream()
                     .filter(event -> cat.equals(event.getCategory()))
                     .collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
@@ -132,13 +172,31 @@ public class EventAddService {
 
         try {
             EventStatus st = EventStatus.valueOf(status.toUpperCase());
-            return eventAddRepository.findAll().stream()
+            return getAllEvents().stream()
                     .filter(event -> st.equals(event.getStatus()))
                     .collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
             LOGGER.warning("Statut inconnu : " + status);
             return List.of();
         }
+    }
+
+    // Méthodes de gestion du cache
+    private boolean isCacheValid() {
+        return cachedEvents != null &&
+                lastCacheUpdate != null &&
+                lastCacheUpdate.plusMinutes(CACHE_DURATION_MINUTES).isAfter(LocalDateTime.now());
+    }
+
+    private void invalidateCache() {
+        cachedEvents = null;
+        lastCacheUpdate = null;
+        LOGGER.info("Cache des événements invalidé");
+    }
+
+    // Méthode publique pour invalider le cache manuellement
+    public void refreshCache() {
+        invalidateCache();
     }
 
     private void validateEventData(Event event) throws ServiceException {

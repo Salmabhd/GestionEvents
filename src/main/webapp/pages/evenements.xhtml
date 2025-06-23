@@ -45,6 +45,7 @@
         .modern-navbar nav {
             display: flex;
             gap: 20px;
+            align-items: center;
         }
 
         .modern-navbar nav a {
@@ -55,6 +56,42 @@
 
         .modern-navbar nav a:hover {
             color: #C1272D;
+        }
+
+        /* Style pour le bouton de déconnexion */
+        .logout-btn {
+            background-color: #C1272D;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #a01f24;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Style pour l'info utilisateur */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .user-name {
+            color: #fff;
+            font-weight: 500;
         }
 
         /* ===== BANNER IMAGE ===== */
@@ -256,7 +293,24 @@
             <a href="accueil.xhtml">Accueil</a>
             <a href="evenements.xhtml">Événements</a>
             <a href="#">À propos</a>
-            <a href="Participant-login.xhtml">Connexion</a>
+
+            <!-- Afficher "Connexion" seulement si l'utilisateur n'est pas connecté -->
+            <h:panelGroup rendered="#{!participantLoginBean.loggedIn}">
+                <a href="Participant-login.xhtml">Connexion</a>
+            </h:panelGroup>
+
+            <!-- Afficher les infos utilisateur et déconnexion si connecté -->
+            <h:panelGroup rendered="#{participantLoginBean.loggedIn}">
+                <div class="user-info">
+                    <span>Bonjour, <span class="user-name">#{participantLoginBean.currentParticipant.nom}</span></span>
+                    <h:form style="margin: 0;">
+                        <h:commandButton value="Se déconnecter"
+                                         action="#{participantLoginBean.logout}"
+                                         styleClass="logout-btn"
+                                         immediate="true" />
+                    </h:form>
+                </div>
+            </h:panelGroup>
         </nav>
         <div class="nav-tools">
             <input type="text" placeholder="Rechercher..." />
@@ -276,7 +330,7 @@
         <div class="event-list">
             <ui:repeat value="#{eventDisplayBean.events}" var="e">
                 <div class="event-card">
-                    <img src="#{request.contextPath}/images/img_23.png" alt="event"/>
+
                     <div class="content">
                         <h3>#{e.title}</h3>
                         <p><strong>Date :</strong> #{e.eventDate}</p>
@@ -307,7 +361,7 @@
             </div>
             <div>
                 <h4>Support</h4>
-                <a href="#">Centre d’aide</a>
+                <a href="#">Centre d'aide</a>
                 <a href="#">Conditions</a>
                 <a href="#">Confidentialité</a>
             </div>

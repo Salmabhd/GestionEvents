@@ -59,10 +59,63 @@
         .submit-btn:hover {
             background-color: #a81f24;
         }
+
+        /* Style pour le bouton retour */
+        .back-btn {
+            background-color: #666;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #555;
+        }
+
+        /* Container pour les boutons */
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .buttons-container .submit-btn,
+        .buttons-container .back-btn {
+            flex: 1;
+        }
+
+        /* Style pour centrer le bouton retour en haut */
+        .back-button-top {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-button-top .back-btn {
+            width: auto;
+            padding: 10px 20px;
+            display: inline-block;
+        }
     </style>
 </h:head>
 <h:body>
     <div class="form-container">
+        <!-- Bouton retour en haut -->
+        <div class="back-button-top">
+            <h:form>
+                <h:commandButton value="← Retour aux événements"
+                                 action="evenements?faces-redirect=true"
+                                 styleClass="back-btn"
+                                 immediate="true" />
+            </h:form>
+        </div>
+
         <h2>Formulaire de Réservation</h2>
         <h:form>
             <h:messages globalOnly="true" style="color:red; margin-bottom:10px;" />
@@ -76,9 +129,17 @@
                 <h:outputLabel for="participantId" value="Identifiant du participant" />
                 <h:inputText id="participantId" value="#{eventReservationBean.participation.participantId}" required="true" />
 
-                <h:commandButton value="Valider la réservation"
-                                 action="#{eventReservationBean.enregistrerReservation}"
-                                 styleClass="submit-btn" />
+                <!-- Container pour les boutons -->
+                <div class="buttons-container">
+                    <h:commandButton value="Retour"
+                                     action="evenements?faces-redirect=true"
+                                     styleClass="back-btn"
+                                     immediate="true" />
+
+                    <h:commandButton value="Valider la réservation"
+                                     action="#{eventReservationBean.enregistrerReservation}"
+                                     styleClass="submit-btn" />
+                </div>
             </h:panelGrid>
         </h:form>
     </div>

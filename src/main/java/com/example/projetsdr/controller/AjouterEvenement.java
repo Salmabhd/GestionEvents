@@ -7,6 +7,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -37,39 +38,28 @@ public class AjouterEvenement implements Serializable {
     private String category;
     private String maxParticipants;
     private String ticketPrice;
-
-    // Utilisation directe des enums du modèle
     private Event.EventStatus status;
 
     @Inject
     private EventAddService eventService;
 
-    // Liste des status disponibles pour le selectOneMenu (JSF)
+    // SOLUTION 1: Injecter EventBean pour rafraîchir sa liste
+    @Inject
+    private EventBean eventBean;
+
     public Event.EventStatus[] getStatuses() {
         return Event.EventStatus.values();
     }
 
-    // Liste des catégories pour le selectOneMenu (JSF)
     public Event.EventCategory[] getCategories() {
         return Event.EventCategory.values();
     }
 
+    @Transactional
     public String ajouterEvenement() {
         try {
             LOGGER.info("=== Début création événement ===");
-            LOGGER.info("Title: " + title);
-            LOGGER.info("Date: " + date);
-            LOGGER.info("Heure: " + heure);
-            LOGGER.info("Venue: " + venue);
-            LOGGER.info("City: " + city);
-            LOGGER.info("Category: " + category);
-            LOGGER.info("Status: " + status);
-            LOGGER.info("MaxParticipants: " + maxParticipants);
-            LOGGER.info("TicketPrice: " + ticketPrice);
-            LOGGER.info("Description: " + (description != null ? description.substring(0, Math.min(50, description.length())) + "..." : "null"));
-
             validateFields();
-
             Event event = createEventFromForm();
 
             if (eventService == null) {
@@ -79,9 +69,19 @@ public class AjouterEvenement implements Serializable {
             Event savedEvent = eventService.createEvent(event);
             LOGGER.info("Event sauvegardé avec ID: " + (savedEvent.getId() != null ? savedEvent.getId() : "null"));
 
+            // Force l'actualisation du cache
+            eventService.refreshCache();
+
+            // SOLUTION 1: Forcer le rafraîchissement de la liste dans EventBean
+            if (eventBean != null) {
+                eventBean.init(); // Rafraîchit la liste des événements
+                LOGGER.info("Liste des événements rafraîchie dans EventBean");
+            }
+
             addSuccessMessage("Événement créé avec succès : " + savedEvent.getTitle());
             clearFields();
-            return null; // rester sur la même page
+
+            return "events.xhtml?faces-redirect=true";
 
         } catch (IllegalArgumentException e) {
             LOGGER.warning("Erreur de validation: " + e.getMessage());
@@ -94,6 +94,45 @@ public class AjouterEvenement implements Serializable {
         }
     }
 
+    public String ajouterEvenementSansRedirection() {
+        try {
+            LOGGER.info("=== Début création événement ===");
+            validateFields();
+            Event event = createEventFromForm();
+
+            if (eventService == null) {
+                throw new RuntimeException("EventAddService n'est pas injecté correctement");
+            }
+
+            Event savedEvent = eventService.createEvent(event);
+            LOGGER.info("Event sauvegardé avec ID: " + (savedEvent.getId() != null ? savedEvent.getId() : "null"));
+
+            eventService.refreshCache();
+
+            // SOLUTION 1: Forcer le rafraîchissement
+            if (eventBean != null) {
+                eventBean.init();
+                LOGGER.info("Liste des événements rafraîchie dans EventBean");
+            }
+
+            addSuccessMessage("Événement créé avec succès : " + savedEvent.getTitle());
+            clearFields();
+
+            FacesContext.getCurrentInstance().getPartialViewContext().setRenderAll(true);
+            return null;
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warning("Erreur de validation: " + e.getMessage());
+            addErrorMessage(e.getMessage());
+            return null;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur technique lors de la création de l'événement", e);
+            addErrorMessage("Erreur technique: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Rest of the methods remain the same...
     private Event createEventFromForm() {
         LocalDateTime eventDateTime = parseDateTime(date, heure);
         Integer maxPart = parseMaxParticipants(maxParticipants);
@@ -253,8 +292,7 @@ public class AjouterEvenement implements Serializable {
                 .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", message));
     }
 
-    // Getters et Setters pour tous les champs
-
+    // Getters et Setters
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 

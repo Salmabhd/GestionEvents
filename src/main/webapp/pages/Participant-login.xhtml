@@ -101,6 +101,30 @@
       .admin-link a:hover {
          text-decoration: underline;
       }
+
+      .register-section {
+         margin-top: 15px;
+         padding-top: 15px;
+         text-align: center;
+      }
+
+      .register-text {
+         color: #666;
+         font-size: 14px;
+         margin-bottom: 8px;
+      }
+
+      .register-link {
+         color: #667eea !important;
+         text-decoration: none !important;
+         font-weight: 500;
+         font-size: 14px;
+      }
+
+      .register-link:hover {
+         text-decoration: underline !important;
+         color: #764ba2 !important;
+      }
    </style>
 </h:head>
 
@@ -136,8 +160,13 @@
                           action="#{participantLoginBean.login}"
                           styleClass="btn-login" />
 
+         <div class="register-section">
+            <div class="register-text">Vous n'avez pas encore de compte ?</div>
+            <h:link outcome="register" value="S'inscrire" styleClass="register-link" />
+         </div>
+
          <div class="admin-link">
-            <h:link outcome="login" value="Connexion Administrateur" />
+            <h:link outcome="admin-login" value="Connexion Administrateur" />
          </div>
       </h:form>
    </div>

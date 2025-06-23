@@ -5,34 +5,32 @@
               https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
               version="4.0">
 
+        <!-- Navigation depuis Participant-login -->
+        <navigation-rule>
+            <from-view-id>/pages/Participant-login.xhtml</from-view-id>
+
+            <navigation-case>
+                <from-outcome>register</from-outcome>
+                <to-view-id>/pages/participant-register.xhtml</to-view-id>
+                <redirect/>
+            </navigation-case>
+
+            <navigation-case>
+                <from-outcome>admin-login</from-outcome>
+                <to-view-id>login.xhtml</to-view-id>
+                <redirect/>
+            </navigation-case>
+
+        </navigation-rule>
     <navigation-rule>
         <from-view-id>/pages/participant-register.xhtml</from-view-id>
+
         <navigation-case>
-            <from-outcome>Participant-login</from-outcome>
+            <from-outcome>participant-login</from-outcome>
             <to-view-id>/pages/Participant-login.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-    </navigation-rule>
-    <navigation-rule>
-        <from-view-id>/pages/Participant-login.xhtml</from-view-id>
-        <navigation-case>
-            <from-outcome>accueil</from-outcome>
-            <to-view-id>/pages/evenements.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-    </navigation-rule>
-    <navigation-rule>
-        <from-view-id>/evenements.xhtml</from-view-id>
-        <navigation-case>
-            <from-outcome>needLogin</from-outcome>
-            <to-view-id>/Participant-login.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>proceedReservation</from-outcome>
-            <to-view-id>/reservation.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
 
-</faces-config>
+    </faces-config>
+

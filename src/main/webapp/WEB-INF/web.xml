@@ -18,7 +18,7 @@
 
 
     <welcome-file-list>
-        <welcome-file>pages/AdminDashboard.xhtml</welcome-file>
+        <welcome-file>login.xhtml</welcome-file>
     </welcome-file-list>
 
     <!-- Configuration JSF (optionnel mais recommandé) -->

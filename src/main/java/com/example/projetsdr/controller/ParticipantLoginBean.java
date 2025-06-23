@@ -67,7 +67,7 @@ public class ParticipantLoginBean implements Serializable {
                 }
 
                 // Connexion normale, pas de réservation en attente OU connexion directe
-                return "evenements?faces-redirect=true";
+                return "accueil?faces-redirect=true";
 
             } else {
                 // Connexion échouée
@@ -93,7 +93,7 @@ public class ParticipantLoginBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 
         addMessage("Déconnexion réussie", FacesMessage.SEVERITY_INFO);
-        return "Participant-login?faces-redirect=true";
+        return null;
     }
 
     /**
